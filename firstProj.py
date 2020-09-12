@@ -49,6 +49,7 @@ class start(Scene):
         testRect.move_to(0.75*RIGHT+0.25*DOWN)
         testSpring = Spring(5*LEFT+0.25*DOWN,0.25*DOWN,10,0.5*UP,color = WHITE,stroke_width = 3)
         stifferSpring = Spring(5*LEFT+0.25*DOWN,0.25*DOWN,20,0.5*UP,color = WHITE,stroke_width = 3)
+        tallerSpring = Spring(5*LEFT+0.25*DOWN,0.25*DOWN,20,0.9*UP,color = WHITE,stroke_width = 3)
 
         testRect.counter = 0
 
@@ -74,7 +75,9 @@ class start(Scene):
         testSpring.add_updater(springUpdater)
         self.add(testSpring,testRect)
         self.wait(8)
-        replacement_transformation
+        self.play(ReplacementTransform(testSpring, stifferSpring))
+        self.wait(1)
+        self.play(ReplacementTransform(stifferSpring,tallerSpring))
         #testShape = Spring(2*LEFT,(2-2.8*math.sin(2*math.pi*i/40))*RIGHT,20,0.5*UP)
 
         # def springUpdater(d,dt):
