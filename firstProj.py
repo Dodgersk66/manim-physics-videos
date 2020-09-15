@@ -6,14 +6,14 @@ import numpy
 class Spring(VMobject):
     CONFIG = {
         "color": BLUE,
-        "fill_color": BLUE
+        "fill_color": BLUE,
     }
 
     def __init__(self, start,finish,turns,height,**kwargs):
         VMobject.__init__(self, **kwargs)
         pointsArray = [start]
 
-        
+        #Simple for loop to zig zag and get the points
         for i in range(0,turns):
             if(i==0):
                 pointsArray.append(start-0.5*height+(finish+(-1)*start)/turns*0.5)
@@ -27,13 +27,21 @@ class Spring(VMobject):
                     pointsArray.append(start-0.5*height+(finish+(-1)*start)/turns*(0.5+i))
         pointsArray.append(finish)
         self.set_points_as_corners(pointsArray)
-        # self.set_points_as_corners(
-        #     [*vertices, start]
-        # )
 
     def get_vertices(self):
         return self.get_start_anchors()
+    
+    def set_start(self,start):
+        self.start = start
+        self.__init__(self,self.start,self.finish,self.turns,self.height)
+        return self
 
+    def set_finish(self,finish):
+        self.finish = finish
+        self.__init__(self,self.start,self.finish,self.turns,self.height)
+        return self
+
+#Intro scene, only adjust title and subtitle
 class intro(Scene):
     def construct(self):
         dur=0.75
@@ -44,14 +52,21 @@ class intro(Scene):
             else:
                 return[x+4*dur+2*dur*dur+1.5*(t-dur),y-2*dur-dur*dur-3*(t-dur)*(t-dur)-5*(t-dur),z]
         
-        mainHexagon = Polygon(ORIGIN,RIGHT,RIGHT*1.5+UP*math.sqrt(0.75),RIGHT+UP*math.sqrt(3),UP*math.sqrt(3),0.5*LEFT+UP*math.sqrt(0.75),color=WHITE,fill_color=WHITE)
-        plane = Polygon(LEFT*4+UP*2,LEFT*4+DOWN*2,RIGHT*4+DOWN*2,color=WHITE,fill_color=GRAY)
+        mainHexagon = Polygon(ORIGIN,RIGHT,RIGHT*1.5+UP*math.sqrt(0.75),RIGHT+UP*math.sqrt(3),UP*math.sqrt(3),0.5*LEFT+UP*math.sqrt(0.75),color=WHITE)
+        plane = Polygon(LEFT*4+UP*2,LEFT*4+DOWN*2,RIGHT*4+DOWN*2,color=LIGHT_GRAY,fill_color=LIGHT_GRAY,fill_opacity=1,stroke_width=0)
         t = TextMobject("Slipping Hexagons")
         t.scale(2)
+        t.move_to(DOWN*1.4)
         title = TextMobject("Waves and Oscillations")
         title.scale(2)
+
+        logo = ImageMobject("logo4.0.png")
+        logo.scale(1.5)
+        logo.move_to(UP*0.8)
+
         subtitle = TextMobject("Ep. 1: Simple Harmonic Motion")
         subtitle.scale(1.2)
+        subtitle.set_color(YELLOW)
         subtitle.move_to(DOWN*1.3)
 
         self.play(FadeIn(plane),run_time=1.2)
@@ -68,18 +83,49 @@ class intro(Scene):
         #self.play(Homotopy(homotopyTest,mainHexagon))
         self.play(Homotopy(homotopyTest,mainHexagon))
         self.play(FadeOut(mainHexagon),FadeOut(plane),run_time=0.6)
-        self.wait(1)
+        self.wait(0.2)
         # #self.wait(1.2)
         # self.play(FadeOut(plane))
         # #self.play(ReplacementTransform(plane,t))
         # # #self.play(FadeOut(plane))
-        self.play(Write(t))
-        self.wait(0.3)
-        self.play(ReplacementTransform(t,title))
+        self.play(FadeIn(logo),FadeIn(t))
+        self.wait(0.8)
+        self.play(FadeOut(logo),FadeOut(t))
+        self.play(FadeIn(title))
         self.wait(0.4)
-        self.play(FadeIn(subtitle))
-        self.wait(0.4)
+        self.play(Write(subtitle),run_time=5)
+        self.wait(0.8)
+        self.play(FadeOut(subtitle),FadeOut(title))
 
+class introductionToSeries(Scene):
+    def construct(self):
+        firstQ = TextMobject("Why waves?")
+        firstQ.move_to(UP*3+LEFT*2)
+        firstQ.set_color(YELLOW)
+
+        secondQ = TextMobject("Why oscillations?")
+        secondQ.move_to(UP*3 + RIGHT*2)
+        secondQ.set_color(YELLOW)
+
+        testSpring = Spring(5*LEFT+0.25*DOWN,0.25*DOWN+5*RIGHT,10,0.5*UP,color = WHITE,stroke_width = 3)
+        testSpring.counter = 0
+
+        def springUpdater(d,dt):
+            time = d.counter/60
+            d.set_start((5+np.sin(5*time))*LEFT + 0.25 * DOWN)
+            d.set_finish((5+np.sin(5*time))*RIGHT+0.25*DOWN)
+            d.counter += 1
+            return d
+            
+        testSpring.add_updater(springUpdater)
+
+        self.add(firstQ)
+        self.wait(1)
+        self.add(secondQ)
+        self.wait(1)
+        self.add(testSpring)
+        self.wait(3)
+#Introducing SHM/Oscillations
 class startScene(Scene):
     def construct(self):
         
@@ -91,7 +137,8 @@ class startScene(Scene):
         
 
         
-        testRect = Square(side_length =1.5,fill_color="#7d7d7d", fill_opacity=1,stroke_width=2,color=WHITE)
+        testRect = Square(side_length =1.5,fill_color="#7d7d7d", fill_opacity=1,stroke_width=2,color=WHITE,sheen_direction=UL,
+            sheen_factor=0.5,)
         testRect.move_to(0.75*RIGHT+0.25*DOWN)
         testSpring = Spring(5*LEFT+0.25*DOWN,0.25*DOWN,10,0.5*UP,color = WHITE,stroke_width = 3)
         stifferSpring = Spring(5*LEFT+0.25*DOWN,0.25*DOWN,20,0.5*UP,color = WHITE,stroke_width = 3)
@@ -138,5 +185,5 @@ class startScene(Scene):
         #     self.wait(0.02)
         #     self.remove(testRect)
         #     self.remove(testShape)
-
-Polygon
+# class complex_solution_explanation(Scene):
+#     def construct(self):
