@@ -205,6 +205,8 @@ class Spring(VMobject):
         "finish":3*RIGHT,
         "turns":10,
         "height":UP,
+        "mass":0,
+        "spring_constant":5
     }
 
     def __init__(self,**kwargs):
@@ -212,21 +214,52 @@ class Spring(VMobject):
         pointsArray = [self.start]
 
         #Simple for loop to zig zag and get the points
-        for i in range(0,self.turns):
-            if(i==0):
-                pointsArray.append(self.start-0.5*self.height+(self.finish+(-1)*self.start)/self.turns*0.5)
-                
-            elif(i < self.turns):
-                
-                if(i % 2 == 1):
-                    pointsArray.append(self.start+0.5*self.height+(self.finish+(-1)*self.start)/self.turns*(0.5+i))
+        if(self.mass == 0):
+            for i in range(0,self.turns):
+                if(i==0):
+                    pointsArray.append(self.start-0.5*self.height+(self.finish+(-1)*self.start)/self.turns*0.5)
                     
-                elif(i % 2 == 0):
-                    pointsArray.append(self.start-0.5*self.height+(self.finish+(-1)*self.start)/self.turns*(0.5+i))
-        pointsArray.append(self.finish)
+                elif(i < self.turns):
+                    
+                    if(i % 2 == 1):
+                        pointsArray.append(self.start+0.5*self.height+(self.finish+(-1)*self.start)/self.turns*(0.5+i))
+                        
+                    elif(i % 2 == 0):
+                        pointsArray.append(self.start-0.5*self.height+(self.finish+(-1)*self.start)/self.turns*(0.5+i))
+            pointsArray.append(self.finish)
+            self.clear_points()
+            self.set_points_as_corners(pointsArray)
+            self.update()
+        else:
+            self.construct_with_gravity()
+    
+    def construct_with_gravity(self):
+        pointsArray = [self.start]
+        prevPoint = self.start
+        height_var = self.height
+        
+        for i in range(0,self.turns):
+            mass_var = self.mass * 9.8 * (self.turns -1-i) / self.turns
+            if(i==0):
+                prevPoint = self.get_new_point(prevPoint,self.height/2,mass_var)
+                pointsArray.append(prevPoint)
+            else:
+                if(i==self.turns):
+                    height_var = self.height/2
+                if(i % 2 == 0):
+                    prevPoint = self.get_new_point(prevPoint,height_var,mass_var)
+                    pointsArray.append(prevPoint)
+                else:
+                    prevPoint = self.get_new_point(prevPoint,-1*height_var, mass_var)
+                    pointsArray.append(prevPoint)
         self.clear_points()
         self.set_points_as_corners(pointsArray)
         self.update()
+
+                
+    def get_new_point(self,prevPoint,height,force):
+        stretch = force / self.spring_constant
+        return prevPoint + height + stretch * DOWN
 
     def get_vertices(self):
         return self.get_start_anchors()
@@ -262,6 +295,12 @@ class Spring(VMobject):
         self.clear_points()
         self.set_points_as_corners(pointsArray)
 
+class spring_with_gravity(Scene):
+    def construct(self):   
+        hanging_spring = Spring(mass = 1, start = 3*UP,height=0.5*RIGHT,spring_constant = 50,turns=30)
+        hanging_spring.make_smooth()
+        self.add(hanging_spring)
+
 #Intro scene, only adjust title and subtitle
 class intro(Scene):
     def construct(self):
@@ -293,8 +332,7 @@ class intro(Scene):
         self.play(FadeIn(plane),run_time=1.2)
         self.play(FadeInFrom(mainHexagon,direction=3*UP),rate_func=rush_into,run_time=0.8);
         self.add_sound("./hitSound.wav",gain=10);
-        #self.play(Homotopy(homotopyTest,mainHexagon))
-        self.play(Rotate(mainHexagon,-1*PI*26.57/180,about_point=ORIGIN),run_time=0.2)
+        #self.play(Homotopy(homotopyTest,mainHexagon)        self.play(Rotate(mainHexagon,-1*PI*26.57/180,about_point=ORIGIN),run_time=0.2)
         self.add_sound("./hitSound.wav",gain=10);
         # for i in range(1,3):
         #     self.play(Rotate(mainHexagon,-1*PI/3,about_point=i*2/math.sqrt(5)*RIGHT + i/math.sqrt(5)*DOWN),run_time=0.6)
