@@ -189,7 +189,6 @@ class introduction_scene(Scene):
         question3.move_to(2*DOWN)
         question3.scale(0.8)
 
-
         self.play(Write(starting_question))
         self.wait(1.3)
         self.play(Write(starting_answer))
@@ -219,14 +218,40 @@ class explain_difference(Scene):
         
 
         massless_spring = Spring(start = 3*LEFT+3*UP,finish = 3*LEFT,turns = 20,height = 0.6*LEFT)   
-        massless_spring_stretched = Spring(start = 3*LEFT + 3*UP, finish = 3*LEFT + DOWN, turns = 20,height = 0.6*LEFT)
+        massless_spring_zero = Spring(start = 3*LEFT + 3*UP, finish = 3*LEFT + 2.5*UP, turns = 20,height = 0.6*LEFT)
         hanging_spring = Spring(mass = 1, start = 3*RIGHT+3*UP,height=0.6*RIGHT,spring_constant = 50,turns=30)
         hanging_spring.make_smooth()
         massless_spring.make_smooth()
-        massless_spring_stretched.make_smooth()
+        massless_spring_zero.make_smooth()
+        massless_spring.next_to(hand1,direction=DOWN)
+        massless_spring.shift(0.25*UP)
+        massless_spring_zero.next_to(hand1,direction=DOWN)
+        massless_spring_zero.shift(0.25*UP)
+
+        hanging_spring.next_to(hand2,direction=DOWN)
+        hanging_spring.shift(0.25*UP)
+
+        rest_length_label = TexMobject("\\ell")
+        rest_length_label.scale(0.8)
+        rest_length_label.next_to(massless_spring,direction=LEFT)
+        zero_label = TexMobject("\\ell = 0")
+        zero_label.scale(0.8)
+        zero_label.next_to(massless_spring_zero,direction=LEFT)
+
+        
+
+        hanging_length = DoubleArrow(0.8*LEFT + hanging_spring.get_top(),0.8*LEFT +hanging_spring.get_bottom(),stroke_width=0.5)
+        hanging_label = TexMobject("L")
+        hanging_label.next_to(hanging_length,direction=LEFT)
 
         self.add(massless_spring,hand1)
         self.wait(0.6)
         self.add(hanging_spring,hand2)
         self.wait(2)
-        self.play(Transform(massless_spring,massless_spring_stretched),run_time = 1.5)
+        self.play(Write(rest_length_label))
+        self.play(Transform(massless_spring,massless_spring_zero),Transform(rest_length_label,zero_label),run_time = 1.5)
+        self.play(GrowFromCenter(hanging_length),FadeIn(hanging_label))
+
+# class solving_scene(Scene):
+#     def construct(self):
+        
