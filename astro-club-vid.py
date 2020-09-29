@@ -37,13 +37,14 @@ class twod_orbit(Scene):
             satt_mag = np.sqrt(x_pos**2 + y_pos**2)
             angle = sattelite.angle
 
-            vel_mag = np.sqrt(sattelite.adjustable_constant * (2/satt_mag - 1/5))
+            vel_mag = np.sqrt(sattelite.adjustable_constant * (2/diff_vec_mag - 1/5))
 
             #vel_vec = (vel_mag/satt_mag) * (RIGHT*5 * np.sin(angle)+UP * 3*np.cos(angle))
 
             mob.move_to((-5 * np.cos(angle + vel_mag/satt_mag * dt))*RIGHT + (3 * np.sin(angle + vel_mag/satt_mag * dt))*UP)
             #print(vel_mag)
             sattelite.angle = angle + vel_mag/satt_mag * dt
+            print("at angle " + str(angle) + ", speed is "+str(vel_mag))
 
             #mob.move_to(sattelite.get_center() + vel_vec * dt)
         
@@ -59,4 +60,4 @@ class twod_orbit(Scene):
                 self.add(locDot)
 
         self.add(orbitEllipse,locDot,sun,sattelite,gravitation_force_vector)
-        self.wait(10)
+        self.wait(1)
