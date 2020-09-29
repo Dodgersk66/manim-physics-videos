@@ -250,7 +250,7 @@ class explain_difference(Scene):
         self.wait(2)
         self.play(Write(rest_length_label))
         self.play(Transform(massless_spring,massless_spring_zero),Transform(rest_length_label,zero_label),run_time = 1.5)
-        self.play(GrowFromCenter(hanging_length),FadeIn(hanging_label))
+        #self.play(GrowFromCenter(hanging_length),FadeIn(hanging_label))
 
 # class solving_scene(Scene):
 #     def construct(self):

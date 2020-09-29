@@ -44,20 +44,61 @@ class twod_orbit(Scene):
             mob.move_to((-5 * np.cos(angle + vel_mag/satt_mag * dt))*RIGHT + (3 * np.sin(angle + vel_mag/satt_mag * dt))*UP)
             #print(vel_mag)
             sattelite.angle = angle + vel_mag/satt_mag * dt
-            print("at angle " + str(angle) + ", speed is "+str(vel_mag))
+            #print("at angle " + str(angle) + ", speed is "+str(vel_mag))
 
             #mob.move_to(sattelite.get_center() + vel_vec * dt)
         
         gravitation_force_vector.add_updater(force_updater)
         # orbitEllipse.add_updater(ellipse_updater)
         sattelite.add_updater(sattelite_updater)
-
+        quest = TextMobject("Do you enjoy orbital mechanics?")
+        
+        quest.set_color(YELLOW)
+        quest2 = TextMobject("Or just Astronomy in general?")
+        
+        quest2.set_color(YELLOW)
+        ans = TextMobject("Well, then Competitive Astronomy Club")
+        ans.move_to(0.3*UP)
+        ans2 = TextMobject("is the place for you!")
+        ans2.move_to(0.3*DOWN)
 
         for i in range(-6,7):
             for j in range(-4,5):
                 locDot = Dot()
                 locDot.move_to(RIGHT*i + UP*j)
                 self.add(locDot)
+        self.play(Write(quest))
+        self.wait(1.5)
+        self.play(ReplacementTransform(quest,quest2))
+        self.wait(1.5)
+        self.play(FadeOut(quest2),FadeOut(quest))
+        self.play(GrowFromCenter(ans),GrowFromCenter(ans2))
+        self.wait(1)
+        self.play(FadeOut(ans),FadeOut(ans2))
+        #self.play(FadeOut(ans2))
+
+        
 
         self.add(orbitEllipse,locDot,sun,sattelite,gravitation_force_vector)
-        self.wait(1)
+        lineArray = []
+        for i in range(0,15):
+            newLine = Line(sun.get_center(),sattelite.get_center())
+            lineArray.append(newLine)
+            self.add(newLine)
+            self.wait(0.45)
+        self.play(FadeOut(orbitEllipse),FadeOut(sun),FadeOut(sattelite))
+        self.clear()
+        self.wait(0.2)
+
+
+
+        # line1 = Line(sun.get_center(),sattelite.get_center())
+        
+        # self.add(line1)
+        # self.wait(0.4)
+        
+        # self.add(Line(sun.get_center(),sattelite.get_center()))
+        # self.wait(0.4)
+        # self.add(Line(sun.get_center(),sattelite.get_center()))
+        # self.wait(0.4)
+        # self.add(Line(sun.get_center(),sattelite.get_center()))
