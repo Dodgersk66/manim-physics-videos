@@ -270,11 +270,30 @@ class solving_scene(Scene):
         hanging_spring_scaled.align_to(5*LEFT + 3.5*UP,UP)
         hanging_spring_scaled_line = Line(hanging_spring_scaled.get_bottom(),hanging_spring_scaled.get_top(),color = BLUE)
 
-        # for i in range(-6,7):
-        #     for j in range(-4,5):
-        #         locDot = Dot()
-        #         locDot.move_to(RIGHT*i + UP*j)
-        #         self.add(locDot)
+        for i in range(-6,7):
+            for j in range(-4,5):
+                locDot = Dot()
+                locDot.move_to(RIGHT*i + UP*j)
+                self.add(locDot)
+
+        t0 = TextMobject("N")
+        t0.align_to(6*LEFT,LEFT)
+        t0.align_to(3.5*UP,UP)
+        t5 = TextMobject("N = 5")
+        t5.align_to(6*LEFT,LEFT)
+        t5.align_to(3.5*UP,UP)
+        t6 = TextMobject("N = 6")
+        t6.align_to(6*LEFT,LEFT)
+        t6.align_to(3.5*UP,UP)
+        t7 = TextMobject("N = 7")
+        t7.align_to(6*LEFT,LEFT)
+        t7.align_to(3.5*UP,UP)
+        t8 = TextMobject("N = 8")
+        t8.align_to(6*LEFT,LEFT)
+        t8.align_to(3.5*UP,UP)
+        t9 = TextMobject("N = 9")
+        t9.align_to(6*LEFT,LEFT)
+        t9.align_to(3.5*UP,UP)
 
         n5 = VGroup(*self.return_mass_list(5,5.1156,hanging_spring_scaled.get_bottom()))
         n6 = VGroup(*self.return_mass_list(6,5.1156,hanging_spring_scaled.get_bottom()))
@@ -289,23 +308,25 @@ class solving_scene(Scene):
         d9 = VGroup(*self.return_cut_list(9,5.1156,hanging_spring_scaled.get_bottom()))
 
         self.add(hanging_spring_scaled)
+        self.add(t0)
         self.wait(0.8)
         self.play(Transform(hanging_spring_scaled,hanging_spring_scaled_line))
         self.add(n5)
         self.add(d5)
+        self.play(Transform(t0,t5))
         
         self.wait(0.4)
-        self.play(Transform(n5,n6),Transform(d5,d6))
+        self.play(Transform(n5,n6),Transform(d5,d6),Transform(t0,t6))
 
         self.wait(0.4)
-        self.play(Transform(n5,n7),Transform(d5,d7))
+        self.play(Transform(n5,n7),Transform(d5,d7),Transform(t0,t7))
 
         self.wait(0.4)
-        self.play(Transform(n5,n8),Transform(d5,d8))
+        self.play(Transform(n5,n8),Transform(d5,d8),Transform(t0,t8))
         
                 
         self.wait(0.4)
-        self.play(Transform(n5,n9),Transform(d5,d9))
+        self.play(Transform(n5,n9),Transform(d5,d9),Transform(t0,t9))
         self.wait(0.2)
 
     
