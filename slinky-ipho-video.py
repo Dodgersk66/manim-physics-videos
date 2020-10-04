@@ -243,6 +243,10 @@ class explain_difference(Scene):
         hanging_length = DoubleArrow(0.8*LEFT + hanging_spring.get_top(),0.8*LEFT +hanging_spring.get_bottom(),stroke_width=0.5)
         hanging_label = TexMobject("L")
         hanging_label.next_to(hanging_length,direction=LEFT)
+        hanging_spring_scaled = Spring(mass = 1, start = 3.5*LEFT+3*UP,height=0.6*RIGHT,spring_constant = 50,turns=30)
+        hanging_spring_scaled.scale(1.8)
+        hanging_spring_scaled.make_smooth()
+        hanging_spring_scaled.align_to(5*LEFT + 3.5*UP,UP)
 
         self.add(massless_spring,hand1)
         self.wait(0.6)
@@ -250,8 +254,79 @@ class explain_difference(Scene):
         self.wait(2)
         self.play(Write(rest_length_label))
         self.play(Transform(massless_spring,massless_spring_zero),Transform(rest_length_label,zero_label),run_time = 1.5)
+        self.wait(1.5)
+        self.play(FadeOut(massless_spring),FadeOut(rest_length_label),FadeOut(hand1),FadeOut(hand2))
+        self.play(Transform(hanging_spring,hanging_spring_scaled))
+        print(hanging_spring_scaled.get_top() - hanging_spring_scaled.get_bottom())
         #self.play(GrowFromCenter(hanging_length),FadeIn(hanging_label))
 
-# class solving_scene(Scene):
-#     def construct(self):
+class solving_scene(Scene):
+    def construct(self):
+        hanging_spring_scaled = Spring(mass = 1, start = 3.5*LEFT+3*UP,height=0.6*RIGHT,spring_constant = 50,turns=30)
         
+
+        hanging_spring_scaled.scale(1.8)
+        hanging_spring_scaled.make_smooth()
+        hanging_spring_scaled.align_to(5*LEFT + 3.5*UP,UP)
+        hanging_spring_scaled_line = Line(hanging_spring_scaled.get_bottom(),hanging_spring_scaled.get_top(),color = BLUE)
+
+        # for i in range(-6,7):
+        #     for j in range(-4,5):
+        #         locDot = Dot()
+        #         locDot.move_to(RIGHT*i + UP*j)
+        #         self.add(locDot)
+
+        n5 = VGroup(*self.return_mass_list(5,5.1156,hanging_spring_scaled.get_bottom()))
+        n6 = VGroup(*self.return_mass_list(6,5.1156,hanging_spring_scaled.get_bottom()))
+        n7 = VGroup(*self.return_mass_list(7,5.1156,hanging_spring_scaled.get_bottom()))
+        n8 = VGroup(*self.return_mass_list(8,5.1156,hanging_spring_scaled.get_bottom()))
+        n9 = VGroup(*self.return_mass_list(9,5.1156,hanging_spring_scaled.get_bottom()))
+
+        d5 = VGroup(*self.return_cut_list(5,5.1156,hanging_spring_scaled.get_bottom()))
+        d6 = VGroup(*self.return_cut_list(6,5.1156,hanging_spring_scaled.get_bottom()))
+        d7 = VGroup(*self.return_cut_list(7,5.1156,hanging_spring_scaled.get_bottom()))
+        d8 = VGroup(*self.return_cut_list(8,5.1156,hanging_spring_scaled.get_bottom()))
+        d9 = VGroup(*self.return_cut_list(9,5.1156,hanging_spring_scaled.get_bottom()))
+
+        self.add(hanging_spring_scaled)
+        self.wait(0.8)
+        self.play(Transform(hanging_spring_scaled,hanging_spring_scaled_line))
+        self.add(n5)
+        self.add(d5)
+        
+        self.wait(0.4)
+        self.play(Transform(n5,n6),Transform(d5,d6))
+
+        self.wait(0.4)
+        self.play(Transform(n5,n7),Transform(d5,d7))
+
+        self.wait(0.4)
+        self.play(Transform(n5,n8),Transform(d5,d8))
+        
+                
+        self.wait(0.4)
+        self.play(Transform(n5,n9),Transform(d5,d9))
+        self.wait(0.2)
+
+    
+
+    def return_mass_list(self,N,reqLength,bottomPoint):
+        initialMass = Dot(bottomPoint,radius = 0.04)
+        massList = [initialMass]
+        length = N * (N+1)/2
+        scale = reqLength/length
+        for i in range(1,N+1):
+            coord = bottomPoint + scale * i * (i+1) / 2 * UP
+            massList.append(Dot(coord,radius = 0.04))
+        return massList
+    
+    def return_cut_list(self,N,reqLength,bottomPoint):
+        initialMass = Dot(bottomPoint,radius = 0.04)
+        massList = [initialMass]
+        length = N * (N+1)/2
+        scale = reqLength/length
+        for i in range(1,N):
+            coord = bottomPoint + scale * i * (i+1) / 2 * UP
+            massList.append(DashedLine(coord+0.5*LEFT,coord + 0.5 * RIGHT))
+        return massList
+
