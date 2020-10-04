@@ -270,64 +270,104 @@ class solving_scene(Scene):
         hanging_spring_scaled.align_to(5*LEFT + 3.5*UP,UP)
         hanging_spring_scaled_line = Line(hanging_spring_scaled.get_bottom(),hanging_spring_scaled.get_top(),color = BLUE)
 
-        for i in range(-6,7):
+        for i in range(-7,8):
             for j in range(-4,5):
                 locDot = Dot()
                 locDot.move_to(RIGHT*i + UP*j)
                 self.add(locDot)
 
         t0 = TextMobject("N")
-        t0.align_to(6*LEFT,LEFT)
+        t0.align_to(6.5*LEFT,LEFT)
         t0.align_to(3.5*UP,UP)
         t5 = TextMobject("N = 5")
-        t5.align_to(6*LEFT,LEFT)
+        t5.align_to(6.5*LEFT,LEFT)
         t5.align_to(3.5*UP,UP)
         t6 = TextMobject("N = 6")
-        t6.align_to(6*LEFT,LEFT)
+        t6.align_to(6.5*LEFT,LEFT)
         t6.align_to(3.5*UP,UP)
         t7 = TextMobject("N = 7")
-        t7.align_to(6*LEFT,LEFT)
+        t7.align_to(6.5*LEFT,LEFT)
         t7.align_to(3.5*UP,UP)
         t8 = TextMobject("N = 8")
-        t8.align_to(6*LEFT,LEFT)
+        t8.align_to(6.5*LEFT,LEFT)
         t8.align_to(3.5*UP,UP)
         t9 = TextMobject("N = 9")
-        t9.align_to(6*LEFT,LEFT)
+        t9.align_to(6.5*LEFT,LEFT)
         t9.align_to(3.5*UP,UP)
+        t10 = TexMobject("N \\rightarrow \infty")
+        t10.align_to(6.5*LEFT,LEFT)
+        t10.align_to(3.5*UP,UP)
+        springBot = hanging_spring_scaled.get_bottom()
 
-        n5 = VGroup(*self.return_mass_list(5,5.1156,hanging_spring_scaled.get_bottom()))
-        n6 = VGroup(*self.return_mass_list(6,5.1156,hanging_spring_scaled.get_bottom()))
-        n7 = VGroup(*self.return_mass_list(7,5.1156,hanging_spring_scaled.get_bottom()))
-        n8 = VGroup(*self.return_mass_list(8,5.1156,hanging_spring_scaled.get_bottom()))
-        n9 = VGroup(*self.return_mass_list(9,5.1156,hanging_spring_scaled.get_bottom()))
+        n = VGroup()
+        n5 = VGroup(*self.return_mass_list(5,5.1156,springBot))
+        n6 = VGroup(*self.return_mass_list(6,5.1156,springBot))
+        n7 = VGroup(*self.return_mass_list(7,5.1156,springBot))
+        n8 = VGroup(*self.return_mass_list(8,5.1156,springBot))
+        n9 = VGroup(*self.return_mass_list(9,5.1156,springBot))
+        nbig = VGroup(*self.return_mass_list(100,5.1156,springBot))
+        
+        d = VGroup()
+        d5 = VGroup(*self.return_cut_list(5,5.1156,springBot))
+        d6 = VGroup(*self.return_cut_list(6,5.1156,springBot))
+        d7 = VGroup(*self.return_cut_list(7,5.1156,springBot))
+        d8 = VGroup(*self.return_cut_list(8,5.1156,springBot))
+        d9 = VGroup(*self.return_cut_list(9,5.1156,springBot))
 
-        d5 = VGroup(*self.return_cut_list(5,5.1156,hanging_spring_scaled.get_bottom()))
-        d6 = VGroup(*self.return_cut_list(6,5.1156,hanging_spring_scaled.get_bottom()))
-        d7 = VGroup(*self.return_cut_list(7,5.1156,hanging_spring_scaled.get_bottom()))
-        d8 = VGroup(*self.return_cut_list(8,5.1156,hanging_spring_scaled.get_bottom()))
-        d9 = VGroup(*self.return_cut_list(9,5.1156,hanging_spring_scaled.get_bottom()))
+
+        singleSpring = Line(3.5 *LEFT + UP,3.5*LEFT + 1.2 * UP,color=BLUE)
+        singleMass = Dot(3.5*LEFT + UP,fill_color = YELLOW,radius = 0.04)
+
+        singleSpringMass = VGroup(singleSpring,singleMass)
+
+        scale = 5.1156/15
+        labelList = []
+        for i in range(1,6):
+            label = TexMobject("i = "+ str(i))
+            label.scale(i/3.7)
+            label.move_to(RIGHT + springBot + (i*(i+1)/4 + i*(i-1)/4)*scale*UP)
+            
+            labelList.append(label)
+
+        labelGroup = VGroup(*labelList)
+    
 
         self.add(hanging_spring_scaled)
         self.add(t0)
         self.wait(0.8)
         self.play(Transform(hanging_spring_scaled,hanging_spring_scaled_line))
-        self.add(n5)
-        self.add(d5)
-        self.play(Transform(t0,t5))
+        self.add(n)
+        self.add(d)
+        self.play(Transform(t0,t5),Transform(n,n5),Transform(d,d5))
         
         self.wait(0.4)
-        self.play(Transform(n5,n6),Transform(d5,d6),Transform(t0,t6))
+        self.play(Transform(n,n6),Transform(d,d6),Transform(t0,t6))
 
         self.wait(0.4)
-        self.play(Transform(n5,n7),Transform(d5,d7),Transform(t0,t7))
+        self.play(Transform(n,n7),Transform(d,d7),Transform(t0,t7))
 
         self.wait(0.4)
-        self.play(Transform(n5,n8),Transform(d5,d8),Transform(t0,t8))
+        self.play(Transform(n,n8),Transform(d,d8),Transform(t0,t8))
         
                 
         self.wait(0.4)
-        self.play(Transform(n5,n9),Transform(d5,d9),Transform(t0,t9))
-        self.wait(0.2)
+        self.play(Transform(n,n9),Transform(d,d9),Transform(t0,t9))
+        
+        self.wait(0.4)
+        self.remove(d)
+        self.play(Transform(n,nbig),Transform(t0,t10))
+        self.wait(0.4)
+        
+        self.play(Transform(n,n5),Transform(t0,t5))
+        self.add(d5)
+        self.wait(0.4)
+
+        self.play(ShowIncreasingSubsets(labelGroup,run_time = 7))
+        
+        # self.play(GrowFromCenter(singleSpringMass),run_time = 2)
+        # #Put marking the generalized coordinate stuff here!!!!!
+        
+        # self.play(FadeOut(n5),FadeOut(t0),FadeOut(hanging_spring_scaled),ScaleInPlace(singleSpringMass,6))
 
     
 
@@ -342,7 +382,7 @@ class solving_scene(Scene):
         return massList
     
     def return_cut_list(self,N,reqLength,bottomPoint):
-        initialMass = Dot(bottomPoint,radius = 0.04)
+        initialMass = DashedLine(bottomPoint+0.5*LEFT, bottomPoint + 0.5 * RIGHT)
         massList = [initialMass]
         length = N * (N+1)/2
         scale = reqLength/length
