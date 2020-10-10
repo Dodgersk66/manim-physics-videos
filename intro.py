@@ -23,7 +23,7 @@ class Logo(Scene):
         logo.scale(1.5)
         logo.move_to(UP*0.8)
 
-        subtitle = TextMobject("Ep. 4: Problems 9 - 11")
+        subtitle = TextMobject("Ep. 5: Problems 12 \& 13")
         subtitle.scale(1.2)
         subtitle.set_color(YELLOW)
         subtitle.move_to(DOWN*1.3)

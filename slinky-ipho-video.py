@@ -322,48 +322,59 @@ class solving_scene(Scene):
 
         scale = 5.1156/15
         labelList = []
-        for i in range(1,6):
+        for i in range(1,7):
             label = TexMobject("i = "+ str(i))
             label.scale(i/3.7)
             label.move_to(RIGHT + springBot + (i*(i+1)/4 + i*(i-1)/4)*scale*UP)
-            
+            print(i)
             labelList.append(label)
+        tempMarker = TexMobject("i = 3")
+        tempMarker.scale(3/3.7)
+        tempMarker.move_to(RIGHT  +springBot + (3 + 3 * 2 / 4)*scale * UP)
+        
+        finalMarker = TexMobject("i")
+        finalMarker.scale(3/3.7)
+        finalMarker.move_to(springBot + (3 + 3 * 2 / 4)*scale * UP)
+        finalMarker.align_to(tempMarker,LEFT)
 
         labelGroup = VGroup(*labelList)
     
 
-        self.add(hanging_spring_scaled)
-        self.add(t0)
-        self.wait(0.8)
-        self.play(Transform(hanging_spring_scaled,hanging_spring_scaled_line))
-        self.add(n)
-        self.add(d)
-        self.play(Transform(t0,t5),Transform(n,n5),Transform(d,d5))
+        # self.add(hanging_spring_scaled)
+        # self.add(t0)
+        # self.wait(0.8)
+        # self.play(Transform(hanging_spring_scaled,hanging_spring_scaled_line))
+        # self.add(n)
+        # self.add(d)
+        # self.play(Transform(t0,t5),Transform(n,n5),Transform(d,d5))
         
-        self.wait(0.4)
-        self.play(Transform(n,n6),Transform(d,d6),Transform(t0,t6))
+        # self.wait(0.4)
+        # self.play(Transform(n,n6),Transform(d,d6),Transform(t0,t6))
 
-        self.wait(0.4)
-        self.play(Transform(n,n7),Transform(d,d7),Transform(t0,t7))
+        # self.wait(0.4)
+        # self.play(Transform(n,n7),Transform(d,d7),Transform(t0,t7))
 
-        self.wait(0.4)
-        self.play(Transform(n,n8),Transform(d,d8),Transform(t0,t8))
+        # self.wait(0.4)
+        # self.play(Transform(n,n8),Transform(d,d8),Transform(t0,t8))
         
                 
-        self.wait(0.4)
-        self.play(Transform(n,n9),Transform(d,d9),Transform(t0,t9))
+        # self.wait(0.4)
+        # self.play(Transform(n,n9),Transform(d,d9),Transform(t0,t9))
         
-        self.wait(0.4)
-        self.remove(d)
-        self.play(Transform(n,nbig),Transform(t0,t10))
-        self.wait(0.4)
+        # self.wait(0.4)
+        # self.remove(d)
+        # self.play(Transform(n,nbig),Transform(t0,t10))
+        # self.wait(1)
         
-        self.play(Transform(n,n5),Transform(t0,t5))
-        self.add(d5)
-        self.wait(0.4)
+        # self.play(Transform(n,n5),Transform(t0,t5))
+        # self.add(d5)
+        # self.wait(0.4)
 
         self.play(ShowIncreasingSubsets(labelGroup,run_time = 7))
-        
+        self.add(tempMarker,finalMarker)
+        self.wait(0.6)
+        self.play(FadeOut(labelGroup))
+        self.play(FadeOut(tempMarker))
         # self.play(GrowFromCenter(singleSpringMass),run_time = 2)
         # #Put marking the generalized coordinate stuff here!!!!!
         
