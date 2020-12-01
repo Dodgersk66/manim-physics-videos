@@ -35,8 +35,14 @@ class InIntroPhysics(Scene):
                     locDot = Dot()
                     locDot.move_to(RIGHT*i + UP*j)
                     self.add(locDot)
+        
+        force1 = Arrow(start = 4 * LEFT, end = 2* LEFT)
+        force2 = Arrow(start = 4 * RIGHT, end = 2* RIGHT)
+        
         charge1 = Charge(4 * RIGHT, True)
         charge2 = Charge(4 * LEFT, False)
+
+        
 
         coulombLaw = TexMobject("\\vec{F}", "= \\frac{1}{4\\pi \\epsilon_0}","\\frac{q_1 q_2}{r^2}","\\hat{r}")
         coulombLaw.move_to(2 * DOWN)
@@ -46,6 +52,7 @@ class InIntroPhysics(Scene):
             "\\hat{r}" : YELLOW
         })
 
-        self.play(FadeIn(charge1),FadeIn(charge2))
-        self.wait(0.3)
+        
+        self.play(GrowArrow(force1),GrowArrow(force2),FadeIn(charge1),FadeIn(charge2),run_time = 1.5,rate_func = rush_from)
+        self.wait(0.5)
         self.play(Write(coulombLaw),run_time = 5)
