@@ -16,14 +16,14 @@ class Logo(Scene):
         t = TextMobject("Slipping Hexagons")
         t.scale(2)
         t.move_to(DOWN*1.4)
-        title = TextMobject("EuPhO 2018")
+        title = TextMobject("Kalda Mechanics")
         title.scale(2)
 
         logo = ImageMobject("./Images/logo4.0.png")
         logo.scale(1.5)
         logo.move_to(UP*0.8)
 
-        subtitle = TextMobject("Problem 1")
+        subtitle = TextMobject("Ep. 6: Problems 14-16")
         subtitle.scale(1.2)
         subtitle.set_color(YELLOW)
         subtitle.move_to(DOWN*1.3)

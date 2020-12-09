@@ -175,6 +175,8 @@ class introduction_scene(Scene):
         problem_state_massless.move_to(2*UP)
         problem_state_massive.move_to(2*UP)
 
+        line = Line(5*LEFT + 1.5*UP,5*RIGHT + 1.5 * UP)
+
         question1 = TextMobject("Part 1. ","How much does a slinky stretch when held from one end?")
         question1.set_color_by_tex_to_color_map({"Part 1. " : YELLOW})
         question1.scale(0.8)
@@ -195,12 +197,29 @@ class introduction_scene(Scene):
         self.play(Write(problem_state_massless))
         self.wait(0.8)
         self.play(Transform(problem_state_massless,problem_state_massive))
+        self.wait(0.6)
+        self.play(GrowFromCenter(line))
+
         self.play(FadeIn(question1))
         self.wait(0.9)
         self.play(FadeIn(question2))
         self.wait(0.9)
         self.play(FadeIn(question3))
         self.wait(0.9)
+
+
+        def topStuffMove(x,y,z,t):
+            return[x,y+2.5*t,z]
+        def topQuestionMove(x,y,z,t):
+            return[x,y+1.9*t,z]
+        def midQuestionMove(x,y,z,t):
+            return[x,y+1.3*t,z]
+        def botQuestionMove(x,y,z,t):
+            return[x,y+0.7*t,z]
+
+        self.play(Homotopy(topStuffMove,line),Homotopy(topStuffMove,starting_question),Homotopy(topStuffMove,starting_answer),Homotopy(topStuffMove,problem_state_massless),Homotopy(topQuestionMove,question1),Homotopy(midQuestionMove,question2),Homotopy(botQuestionMove,question3))
+        self.wait(1)
+
 
 
 
@@ -260,7 +279,7 @@ class explain_difference(Scene):
         print(hanging_spring_scaled.get_top() - hanging_spring_scaled.get_bottom())
         #self.play(GrowFromCenter(hanging_length),FadeIn(hanging_label))
 
-class solving_scene(Scene):
+class SolvingScene(Scene):
     def construct(self):
         hanging_spring_scaled = Spring(mass = 1, start = 3.5*LEFT+3*UP,height=0.6*RIGHT,spring_constant = 50,turns=30)
         
@@ -340,41 +359,78 @@ class solving_scene(Scene):
         labelGroup = VGroup(*labelList)
     
 
-        # self.add(hanging_spring_scaled)
-        # self.add(t0)
-        # self.wait(0.8)
-        # self.play(Transform(hanging_spring_scaled,hanging_spring_scaled_line))
-        # self.add(n)
-        # self.add(d)
-        # self.play(Transform(t0,t5),Transform(n,n5),Transform(d,d5))
+        self.add(hanging_spring_scaled)
+        self.add(t0)
+        self.wait(0.8)
         
-        # self.wait(0.4)
-        # self.play(Transform(n,n6),Transform(d,d6),Transform(t0,t6))
+        self.add(n)
+        self.add(d)
+        self.play(Transform(t0,t5),Transform(n,n5),Transform(d,d5))
+        self.play(Transform(hanging_spring_scaled,hanging_spring_scaled_line))
+        
+        self.wait(0.4)
+        self.play(Transform(n,n6),Transform(d,d6),Transform(t0,t6))
 
-        # self.wait(0.4)
-        # self.play(Transform(n,n7),Transform(d,d7),Transform(t0,t7))
+        self.wait(0.4)
+        self.play(Transform(n,n7),Transform(d,d7),Transform(t0,t7))
 
-        # self.wait(0.4)
-        # self.play(Transform(n,n8),Transform(d,d8),Transform(t0,t8))
+        self.wait(0.4)
+        self.play(Transform(n,n8),Transform(d,d8),Transform(t0,t8))
         
                 
-        # self.wait(0.4)
-        # self.play(Transform(n,n9),Transform(d,d9),Transform(t0,t9))
+        self.wait(0.4)
+        self.play(Transform(n,n9),Transform(d,d9),Transform(t0,t9))
         
-        # self.wait(0.4)
-        # self.remove(d)
-        # self.play(Transform(n,nbig),Transform(t0,t10))
-        # self.wait(1)
+        self.wait(0.4)
+        self.remove(d)
+        self.play(Transform(n,nbig),Transform(t0,t10))
+        self.wait(1)
         
-        # self.play(Transform(n,n5),Transform(t0,t5))
-        # self.add(d5)
-        # self.wait(0.4)
+        self.play(Transform(n,n5),Transform(t0,t5))
+        self.add(d5)
+        self.wait(0.4)
 
         self.play(ShowIncreasingSubsets(labelGroup,run_time = 7))
         self.add(tempMarker,finalMarker)
         self.wait(0.6)
         self.play(FadeOut(labelGroup))
         self.play(FadeOut(tempMarker))
+
+
+        massMarker = TexMobject("M")
+        massMarker.move_to(5 * LEFT + UP)
+
+        forceEquation = TexMobject("F_T = img")
+        forceEquation2 = TexMobject("F_T = \\frac{iMg}{N}")
+        forceHooke = TexMobject("F_T = k\\Delta x_i = \\frac{iMg}{N}")
+        forceHooke2 = TexMobject("F_T = k\\Delta x_i = \\frac{iMg}{N}")
+
+        displacementEq = TexMobject("\\Delta x_i = \\frac{iMg}{kN}")
+
+
+        forceEquation.move_to(2* RIGHT + 2*UP)
+        forceEquation2.move_to(2* RIGHT + 2*UP)
+        forceHooke.move_to(2.6 * RIGHT + 0.9 * UP)
+        forceHooke.align_to(forceEquation2, direction = LEFT, alignment_vect=  RIGHT)
+
+        forceHooke2.move_to(2.6 * RIGHT + 0.9 * UP)
+        forceHooke2.align_to(forceEquation2, direction = LEFT, alignment_vect=  RIGHT)
+        displacementEq.move_to(-0.2 * UP)
+        displacementEq.align_to(forceHooke,direction = RIGHT, alignment_vect = RIGHT)
+
+
+        self.play(Write(massMarker))
+        self.play(Write(forceEquation))
+        self.play(Transform(forceEquation, forceEquation2))
+        self.play(Write(forceHooke))
+        self.add(forceHooke2)
+        self.play(Transform(forceHooke2,displacementEq))
+        self.wait(0.5)
+
+        totalDisplaceEq = TexMobjecT("\\Delta X = \\sum_{i = 1}^{N} \\frac{iMg}{kN}")
+
+
+
         # self.play(GrowFromCenter(singleSpringMass),run_time = 2)
         # #Put marking the generalized coordinate stuff here!!!!!
         
