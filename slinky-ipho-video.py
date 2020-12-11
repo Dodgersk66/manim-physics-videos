@@ -402,10 +402,10 @@ class SolvingScene(Scene):
 
         forceEquation = TexMobject("F_T = img")
         forceEquation2 = TexMobject("F_T = \\frac{iMg}{N}")
-        forceHooke = TexMobject("F_T = k\\Delta x_i = \\frac{iMg}{N}")
-        forceHooke2 = TexMobject("F_T = k\\Delta x_i = \\frac{iMg}{N}")
+        forceHooke = TexMobject("F_T = k_i\\Delta x_i = \\frac{iMg}{N}")
+        forceHooke2 = TexMobject("F_T = k_i\\Delta x_i = \\frac{iMg}{N}")
 
-        displacementEq = TexMobject("\\Delta x_i = \\frac{iMg}{kN}")
+        displacementEq = TexMobject("\\Delta x_i = \\frac{iMg}{k_iN}")
 
 
         forceEquation.move_to(2* RIGHT + 2*UP)
@@ -427,7 +427,25 @@ class SolvingScene(Scene):
         self.play(Transform(forceHooke2,displacementEq))
         self.wait(0.5)
 
-        totalDisplaceEq = TexMobjecT("\\Delta X = \\sum_{i = 1}^{N} \\frac{iMg}{kN}")
+        totalDisplaceEq = TexMobject("\\Delta X = \\sum_{i = 1}^{N} \\frac{iMg}{k_iN}")
+        totalDisplaceEq2 = TexMobject("\\Delta X = \\sum_{i = 1}^{N} \\frac{iMg}{k_iN} = \\frac{(N+1)Mg}{2k_i}")
+        totalDisplaceEq.move_to(0.5 * RIGHT + 2 * UP)
+        totalDisplaceEq2.move_to(2  * UP)
+        totalDisplaceEq2.align_to(totalDisplaceEq,direction = LEFT,alignment_vect = LEFT)
+        
+        self.play(FadeOut(forceEquation),FadeOut(forceHooke),FadeOut(forceHooke2))
+
+        self.play(Write(totalDisplaceEq))
+        self.wait(0.3)
+        self.play(Write(totalDisplaceEq2))
+
+        divideLine = Line(1 * LEFT + UP, 5 * RIGHT + UP)
+        subtitle = TexMobject("\\text{Finding }k_i")
+        subtitle.set_color(YELLOW)
+        subtitle.move_to(0.5 * UP + 0.5 * RIGHT)
+
+        self.play(GrowFromCenter(divideLine),FadeIn(subtitle))
+
 
 
 
