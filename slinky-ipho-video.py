@@ -438,6 +438,7 @@ class SolvingScene(Scene):
         self.play(Write(totalDisplaceEq))
         self.wait(0.3)
         self.play(Write(totalDisplaceEq2))
+        self.play(FadeOut(totalDisplaceEq),run_time=0.1)
 
         divideLine = Line(1 * LEFT + UP, 5 * RIGHT + UP)
         subtitle = TexMobject("\\text{Finding }k_i")
@@ -445,6 +446,25 @@ class SolvingScene(Scene):
         subtitle.move_to(0.5 * UP + 0.5 * RIGHT)
 
         self.play(GrowFromCenter(divideLine),FadeIn(subtitle))
+
+        def shiftUp(x,y,z,t):
+            return[x,y+3*t,z]
+        self.play(Homotopy(shiftUp, divideLine),Homotopy(shiftUp, subtitle),Homotopy(shiftUp, totalDisplaceEq2))
+        self.wait(2)
+
+        def shiftLeft(x,y,z,t):
+            return[x-t,y,z]
+
+        vertDiv = Line(2*LEFT + 3.5*UP,2*LEFT+DOWN)
+
+        floor = Polygon(2*LEFT+DOWN,8*RIGHT+DOWN,8*RIGHT+DOWN*4,2*LEFT+DOWN*4,fill_opacity=1,fill_color=DARK_GRAY,sheen_direction = DOWN,stroke_width = 0,sheen_factor=0.6)
+
+
+        self.play(Homotopy(shiftLeft,subtitle),FadeIn(vertDiv))
+        self.add(floor)
+        self.wait(1.5)
+
+
 
 
 
