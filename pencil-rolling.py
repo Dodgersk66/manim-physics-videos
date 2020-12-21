@@ -58,4 +58,5 @@ class Intro(Scene):
         self.play(FadeOut(subtitle),FadeOut(title))
 
 class Problem(Scene):
-    
+    def construct(self):
+                

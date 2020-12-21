@@ -6,3 +6,4 @@ sound
 
 __pycache__
 
+*.txt
