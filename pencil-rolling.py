@@ -59,4 +59,80 @@ class Intro(Scene):
 
 class Problem(Scene):
     def construct(self):
-                
+        # for i in range(-7,8):
+        #         for j in range(-4,5):
+        #             locDot = Dot()
+        #             locDot.move_to(RIGHT*i + UP*j)
+        #             self.add(locDot)
+        
+        hexagon = RegularPolygon(fill_opacity = 1, fill_color = "#F5F5DC",color=WHITE)
+        hexagon.scale(0.8)
+        lead = Circle(radius = 0.2,fill_opacity = 1, fill_color = "#555555",sheen_factor = 0.5, sheen_direction = UL,stroke_width = 0)
+        leaddup = Circle(radius = 0.2,fill_opacity = 1, fill_color = "#555555",sheen_factor = 0.5, sheen_direction = UL,stroke_width = 0)
+        hexagondup = RegularPolygon(fill_opacity = 1, fill_color = "#F5F5DC",color=WHITE)
+        hexagondup.scale(0.8)
+        pencil = VGroup(hexagon,lead)    
+        pencilDup = VGroup(hexagondup,leaddup)     
+        pencil.rotate_about_origin(-np.arctan(0.25))
+        pencil.move_to(4.22 * LEFT + 0.77 * UP)
+        
+        #self.add(pencil)
+
+
+        spokes = []
+
+        for i in range(0,6):
+            spoke = Line(ORIGIN,0.8 * np.sin(i * PI/3) * UP + 0.8 * np.cos( i * PI / 3)*RIGHT)
+            spokes.append(spoke)
+
+
+        pencilNewModel = VGroup(*spokes,lead)
+        #self.play(Transform(pencil,pencilNewModel))
+
+        #self.play(Transform(pencil,pencilDup))
+
+        plane = Line(2*DOWN + 4 * RIGHT, 2* DOWN + 4 * RIGHT + 12.36931 * LEFT,stroke_width = 7)
+        plane2 = Line(2 * DOWN + 4 * RIGHT, 2* DOWN + 8 * RIGHT,stroke_width = 7)
+        plane3 = DashedLine(2 * DOWN + 4 * RIGHT, 2 * DOWN + 8 * LEFT,dash_length = 0.25,stroke_width = 7)
+
+        #plane = Line(2 * DOWN + 4 * RIGHT, 8 * LEFT + UP)
+
+        angleLabel = TexMobject("\\theta")
+        angleLabel.set_color(YELLOW)
+        angleLabel.move_to(0.5 * RIGHT + 1.6 * DOWN)
+        angleMark = Arc(PI - np.arctan(0.25),angle = np.arctan(0.25),radius=  3,arc_center = 4 * RIGHT + 2 * DOWN)
+        angleMark.set_color(YELLOW)
+
+        kick = Arrow(start = -6.11 * RIGHT + 1.96 * UP, end = -4.68 * RIGHT + 1.6 * UP, color = GREEN)
+
+        self.add(plane,plane2)
+        self.wait(0.2)
+        self.play(Rotate(plane,angle = -1 * np.arctan(0.25),about_point = 2 * DOWN + 4 * RIGHT),FadeIn(plane3),run_time = 2)
+        self.play(Write(angleLabel),FadeIn(angleMark))
+        self.play(DrawBorderThenFill(pencil))
+        self.play(GrowFromPoint(kick,-6.11 * RIGHT + 1.96 * UP))
+        #create updater for stuff rolling down
+        pencil.initAngSpeed = 0.8
+        pencil.initAngToPlane = PI/3;
+        pencil.pointRotate = 4 * LEFT;
+        pencil.effLength = 0.795
+        def pencil_updater(obj,dt):
+            if(pencil.initAngToPlane >= 2 * PI/3):
+                pencil.initAngToPlane = PI/3
+                pencil.initAngSpeed /= 2
+                pencil.pointRotate +=pencil.effLength * 1/np.sqrt(17) * DOWN +  pencil.effLength * 4 / np.sqrt(17) * RIGHT
+
+            angToVert = np.arctan(0.25) + pencil.initAngToPlane - PI/2
+            pencil.initAngSpeed += 0.4 * np.sin(angToVert) *dt
+            pencil.initAngToPlane += pencil.initAngSpeed * dt
+            pencil.rotate(-1 * pencil.initAngSpeed * dt, OUT, about_point = pencil.pointRotate)
+
+
+
+        
+        pencil.add_updater(pencil_updater)
+        self.add(pencil)
+        self.wait(1)
+        self.play(FadeOut(kick))
+        self.wait(5)
+
