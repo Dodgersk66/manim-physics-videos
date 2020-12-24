@@ -59,11 +59,11 @@ class Intro(Scene):
 
 class Problem(Scene):
     def construct(self):
-        # for i in range(-7,8):
-        #         for j in range(-4,5):
-        #             locDot = Dot()
-        #             locDot.move_to(RIGHT*i + UP*j)
-        #             self.add(locDot)
+        for i in range(-7,8):
+                for j in range(-4,5):
+                    locDot = Dot()
+                    locDot.move_to(RIGHT*i + UP*j)
+                    self.add(locDot)
         
         hexagon = RegularPolygon(fill_opacity = 1, fill_color = "#F5F5DC",color=WHITE)
         hexagon.scale(0.8)
@@ -106,13 +106,17 @@ class Problem(Scene):
         angleMark.set_color(YELLOW)
 
         kick = Arrow(start = -6.11 * RIGHT + 1.96 * UP, end = -4.68 * RIGHT + 1.6 * UP, color = GREEN)
+        sideLabel = TexMobject("r")
+        sideLabel.move_to(3.5 * LEFT + 1.8 * UP)
 
         self.add(plane,plane2)
         self.wait(0.2)
         self.play(Rotate(plane,angle = -1 * np.arctan(0.25),about_point = 2 * DOWN + 4 * RIGHT),FadeIn(plane3),run_time = 2)
         self.play(Write(angleLabel),FadeIn(angleMark))
         self.play(DrawBorderThenFill(pencil))
+        self.play(Write(sideLabel))
         self.play(GrowFromPoint(kick,-6.11 * RIGHT + 1.96 * UP))
+        self.remove(sideLabel)
         #create updater for stuff rolling down
         pencil.initAngSpeed = 1.3
         pencil.initAngToPlane = PI/3;
@@ -156,11 +160,13 @@ class Problem(Scene):
         
         self.play(ReplacementTransform(pencil,pencilDup))
 
+
+
         #TODO show the cylinder rolling down with no terminal velocity
 
-        cylinderOut = Circle(radius = 0.8,fill_color = "#F5F5DC", color = WHITE)
+        cylinderOut = Circle(radius = 0.8,fill_color = "#F5F5DC", color = WHITE,fill_opacity=1)
         cylinderIn = Circle(radius = 0.2,fill_opacity = 1, fill_color = "#555555",sheen_factor = 0.5, sheen_direction = UL,stroke_width = 0)
-        cylinderDot=  SmallDot()
+        cylinderDot=  SmallDot(color = BLACK)
         cylinderDot.move_to(0.7 * UP)
 
         cylinder = VGroup(cylinderOut,cylinderIn,cylinderDot)
@@ -171,12 +177,16 @@ class Problem(Scene):
         cylinder.acc = 0.6
         
         def cylinder_updater(obj,dt):
-            obj.shift(RIGHT * cylinder.initSpeed * 4/np.sqrt(17) * dt+ UP * cylinder.initSpeed /np.sqrt(17) * dt)
+            cylinder.shift(RIGHT * cylinder.initSpeed * 4/np.sqrt(17) * dt+ DOWN * cylinder.initSpeed /np.sqrt(17) * dt)
             cylinder.initSpeed += cylinder.acc * dt
-            obj.rotate(-1 * cylinder.initSpeed / 0.8 * dt, about_point = obj.get_center())
+            cylinder.rotate(-1 * cylinder.initSpeed / 0.8 * dt, about_point = obj.get_center())
 
         cylinder.add_updater(cylinder_updater)
-        self.wait(3)
+        self.add(cylinder)
+        self.wait(4.5)
+        cylinder.remove_updater(cylinder_updater)
+        cylinder.suspend_updating()
+        self.play(FadeOut(cylinder))
 
         pencilDup.add_updater(pencilDup_updater)
         self.add(pencilDup)
@@ -292,7 +302,12 @@ class Solve(Scene):
 
         #TODO Draw velocity vectors
 
+        velocityVector3=  Line(start= 4 * LEFT + 0.8 * RIGHT * np.cos(PI/3 - np.arctan(0.25))+ 0.8 * UP * np.sin(PI/3 - np.arctan(0.25)), end = 4 * LEFT + 0.8 * RIGHT * np.cos(PI/3 - np.arctan(0.25))+ 0.8 * UP * np.sin(PI/3 - np.arctan(0.25)) + RIGHT * 1 * np.cos(PI/6 + np.arctan(0.25))+ DOWN * 1 * np.sin(PI/6 + np.arctan(0.25))  ,color = GREEN)
+        velocityVector3.add_tip(tip_length = 0.2)
         
+        velocityVector4=  Line(start= 4 * LEFT +  0.8 * RIGHT * np.cos(PI/3 - np.arctan(0.25))+ 0.8 * UP * np.sin(PI/3 - np.arctan(0.25)) + 0.8 /np.sqrt(17) * UP + 3.2/np.sqrt(17) * LEFT, end = 4 * LEFT + 0.8 * RIGHT * np.cos(PI/3 - np.arctan(0.25))+ 0.8 * UP * np.sin(PI/3 - np.arctan(0.25)) + RIGHT * 0.5 * np.cos(PI/6 - np.arctan(0.25))+ UP * 0.5 * np.sin(PI/6 - np.arctan(0.25))  ,color = BLUE)
+        velocityVector4.add_tip(tip_length = 0.2)
+
         pencil.add_updater(pencil_updater)
         self.add(pencil,pencil2)
         self.remove(pauseButton)
@@ -302,6 +317,8 @@ class Solve(Scene):
         
 
         self.add(pauseButton)
+
+        self.play(FadeIn(velocityVector3),FadeIn(velocityVector4))
 
         #TODO Draw triangles for the little geometry
 
@@ -325,6 +342,8 @@ class Solve(Scene):
         consEnergyEq2.move_to(3 * LEFT + 3 * UP)
 
         self.play(Write(consEnergyEq))
+        self.play(Indicate(velocityVector3))
+        self.play(Indicate(velocityVector4))
         self.play(Transform(consEnergyEq,consEnergyEq2))
 
         self.play(FadeOut(pencil2),FadeOut(eqTriangle))
@@ -349,7 +368,7 @@ class Solve(Scene):
 
         self.play(FadeIn(velocityVector2))
 
-
+        self.play(Indicate(pivot2))
 
         def homotopy_shift_down(x,y,z,t):
             return[x,y-2 * t, z]
@@ -364,9 +383,7 @@ class Solve(Scene):
 
         momentArmInitial = DashedLine(4 * LEFT + pencil.effLength * 1/np.sqrt(17) * DOWN +  pencil.effLength * 4 / np.sqrt(17) * RIGHT,4 * LEFT + pencil.effLength * 1/np.sqrt(17) * DOWN +  pencil.effLength * 4 / np.sqrt(17) * RIGHT + 0.4 * RIGHT * np.cos(PI/3 - np.arctan(0.25))+ 0.4 * UP * np.cos(PI/3 - np.arctan(0.25)),color = GREEN)
         momentArmInitial.shift(2 * DOWN)
-        self.play(FadeIn(momentArmInitial))
-        self.play(Indicate(momentArmInitial))
-
+        
         consOfAngMEq2 = TexMobject("\\frac{r}{2}v_f", "=","rv_0")
         consOfAngMEq2.set_color_by_tex_to_color_map({
             "\\frac{r}{2}v_f" : GREEN,
@@ -377,6 +394,14 @@ class Solve(Scene):
         consOfAngMEq2.move_to(3 * LEFT + 1.8 * UP)
 
         self.play(Write(consOfAngMEq1))
+        self.play(Indicate(radius1))
+        self.play(Indicate(velocityVector1))
+        self.play(Indicate(radius2))
+        self.play(Indicate(velocityVector2))
+
+        self.play(FadeIn(momentArmInitial))
+        self.play(Indicate(momentArmInitial))
+
         self.play(ReplacementTransform(consOfAngMEq1,consOfAngMEq2))
 
         solveEq = TexMobject("\\frac{1}{2}m","v_f^2", "- \\frac{1}{2}m","v_0^2"," =  mgr \\sin","\\theta")
