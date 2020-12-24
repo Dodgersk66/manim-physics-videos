@@ -165,6 +165,19 @@ class Problem(Scene):
 
         cylinder = VGroup(cylinderOut,cylinderIn,cylinderDot)
 
+        cylinder.move_to(9 * LEFT + 2.07 * UP)
+
+        cylinder.initSpeed = 1.5
+        cylinder.acc = 0.6
+        
+        def cylinder_updater(obj,dt):
+            obj.shift(RIGHT * cylinder.initSpeed * 4/np.sqrt(17) * dt+ UP * cylinder.initSpeed /np.sqrt(17) * dt)
+            cylinder.initSpeed += cylinder.acc * dt
+            obj.rotate(-1 * cylinder.initSpeed / 0.8 * dt, about_point = obj.get_center())
+
+        cylinder.add_updater(cylinder_updater)
+        self.wait(3)
+
         pencilDup.add_updater(pencilDup_updater)
         self.add(pencilDup)
         self.wait(2.26)
@@ -283,26 +296,117 @@ class Solve(Scene):
         pencil.add_updater(pencil_updater)
         self.add(pencil,pencil2)
         self.remove(pauseButton)
-        self.wait(1.13)
+        self.wait(0.81)
         pencil.suspend_updating()
+        pencil.remove_updater(pencil_updater)
         
 
         self.add(pauseButton)
 
         #TODO Draw triangles for the little geometry
 
+        eqTriangle = Polygon(pencil2.get_center(),pencil2.get_center() + 0.8 * RIGHT * 4/np.sqrt(17) + 0.8 * DOWN / np.sqrt(17),4 * LEFT,color = YELLOW)
+
+        self.play(DrawBorderThenFill(eqTriangle))
+
         consEnergyEq = TexMobject("\\frac{1}{2}m","v_f^2", "- \\frac{1}{2}m","v_0^2"," =  mgr \\sin","\\theta")
         consEnergyEq.set_color_by_tex_to_color_map({
-            "v_f^2":GREEN,
+            "v_f^2":BLUE,
             "v_0^2":GREEN,
             "\\theta":YELLOW
         })
-        consEnergyEq.move_to(3 * UP)
+        consEnergyEq.move_to(2 * UP)
+        consEnergyEq2 = TexMobject("\\frac{1}{2}m","v_f^2", "- \\frac{1}{2}m","v_0^2"," =  mgr \\sin","\\theta")
+        consEnergyEq2.set_color_by_tex_to_color_map({
+            "v_f^2":GREEN,
+            "v_0^2":BLUE,
+            "\\theta":YELLOW
+        })
+        consEnergyEq2.move_to(3 * LEFT + 3 * UP)
 
         self.play(Write(consEnergyEq))
+        self.play(Transform(consEnergyEq,consEnergyEq2))
 
- 
+        self.play(FadeOut(pencil2),FadeOut(eqTriangle))
+
+        pivot1 = Dot(4 * LEFT,color = GREEN)
+        pivot2 = Dot(4 * LEFT + pencil.effLength * 1/np.sqrt(17) * DOWN +  pencil.effLength * 4 / np.sqrt(17) * RIGHT,color = BLUE)
+
+        radius1 = Line(4 * LEFT,4 * LEFT + 0.8 * RIGHT * np.cos(PI/3 - np.arctan(0.25))+ 0.8 * UP * np.sin(PI/3 - np.arctan(0.25)) ,color = GREEN)
+        radius2 = Line(4 * LEFT + pencil.effLength * 1/np.sqrt(17) * DOWN +  pencil.effLength * 4 / np.sqrt(17) * RIGHT,4 * LEFT + 0.8 * RIGHT * np.cos(PI/3 - np.arctan(0.25))+ 0.8 * UP * np.sin(PI/3 - np.arctan(0.25)) ,color = BLUE)
+
+
+        self.play(FadeIn(pivot1),FadeIn(radius1))
         
+        velocityVector1=  Line(start= 4 * LEFT + 0.8 * RIGHT * np.cos(PI/3 - np.arctan(0.25))+ 0.8 * UP * np.sin(PI/3 - np.arctan(0.25)), end = 4 * LEFT + 0.8 * RIGHT * np.cos(PI/3 - np.arctan(0.25))+ 0.8 * UP * np.sin(PI/3 - np.arctan(0.25)) + RIGHT * 1 * np.cos(PI/6 + np.arctan(0.25))+ DOWN * 1 * np.sin(PI/6 + np.arctan(0.25))  ,color = GREEN)
+        velocityVector1.add_tip(tip_length = 0.2)
+        self.play(FadeIn(velocityVector1))
+
+        self.play(FadeIn(pivot2),FadeIn(radius2))
+
+        velocityVector2=  Line(start= 4 * LEFT +  0.8 * RIGHT * np.cos(PI/3 - np.arctan(0.25))+ 0.8 * UP * np.sin(PI/3 - np.arctan(0.25)), end = 4 * LEFT + 0.8 * RIGHT * np.cos(PI/3 - np.arctan(0.25))+ 0.8 * UP * np.sin(PI/3 - np.arctan(0.25)) + RIGHT * 0.5 * np.cos(PI/6 - np.arctan(0.25))+ UP * 0.5 * np.sin(PI/6 - np.arctan(0.25))  ,color = BLUE)
+        velocityVector2.add_tip(tip_length = 0.2)
+
+        self.play(FadeIn(velocityVector2))
+
+
+
+        def homotopy_shift_down(x,y,z,t):
+            return[x,y-2 * t, z]
+        self.play(Homotopy(homotopy_shift_down,pencil),Homotopy(homotopy_shift_down,angleLabel),Homotopy(homotopy_shift_down,angleMark),Homotopy(homotopy_shift_down,plane),Homotopy(homotopy_shift_down,plane2),Homotopy(homotopy_shift_down,plane3),
+                    Homotopy(homotopy_shift_down,pivot1),Homotopy(homotopy_shift_down,pivot2),Homotopy(homotopy_shift_down,radius1),Homotopy(homotopy_shift_down,radius2),Homotopy(homotopy_shift_down,velocityVector1),Homotopy(homotopy_shift_down,velocityVector2))
+        
+        consOfAngMEq1 = TexMobject("\\vec{r_f}\\times \\vec{v_f}", "=","\\vec{r_0}\\times \\vec{v_0}")
+        consOfAngMEq1.set_color_by_tex_to_color_map({
+            "\\vec{r_f}\\times \\vec{v_f}" : GREEN,
+            "\\vec{r_0}\\times \\vec{v_0}" : BLUE
+        })
+
+        momentArmInitial = DashedLine(4 * LEFT + pencil.effLength * 1/np.sqrt(17) * DOWN +  pencil.effLength * 4 / np.sqrt(17) * RIGHT,4 * LEFT + pencil.effLength * 1/np.sqrt(17) * DOWN +  pencil.effLength * 4 / np.sqrt(17) * RIGHT + 0.4 * RIGHT * np.cos(PI/3 - np.arctan(0.25))+ 0.4 * UP * np.cos(PI/3 - np.arctan(0.25)),color = GREEN)
+        momentArmInitial.shift(2 * DOWN)
+        self.play(FadeIn(momentArmInitial))
+        self.play(Indicate(momentArmInitial))
+
+        consOfAngMEq2 = TexMobject("\\frac{r}{2}v_f", "=","rv_0")
+        consOfAngMEq2.set_color_by_tex_to_color_map({
+            "\\frac{r}{2}v_f" : GREEN,
+            "rv_0" : BLUE
+        })
+
+        consOfAngMEq1.move_to(3 * LEFT + 1.8 * UP)
+        consOfAngMEq2.move_to(3 * LEFT + 1.8 * UP)
+
+        self.play(Write(consOfAngMEq1))
+        self.play(ReplacementTransform(consOfAngMEq1,consOfAngMEq2))
+
+        solveEq = TexMobject("\\frac{1}{2}m","v_f^2", "- \\frac{1}{2}m","v_0^2"," =  mgr \\sin","\\theta")
+        solveEq.set_color_by_tex_to_color_map({
+            "v_f^2":GREEN,
+            "v_0^2":BLUE,
+            "\\theta":YELLOW
+        })
+        solveEq.move_to(3 * LEFT + UP)
+
+        solveEq2 = TexMobject("\\frac{1}{2}m","(4v_0^2)", "- \\frac{1}{2}m","v_0^2"," =  mgr \\sin","\\theta")
+        solveEq2.set_color_by_tex_to_color_map({
+            "(4v_0^2)":BLUE,
+            "v_0^2":BLUE,
+            "\\theta":YELLOW
+        }) 
+        solveEq2.move_to(3 * LEFT+ 0.6 * UP)
+
+        finalEq = TexMobject("\\Longrightarrow","v_0^2","= \\frac{2}{3}gr\\sin","\\theta")
+        finalEq.set_color_by_tex_to_color_map({
+            "v_0^2" : BLUE,
+            "\\theta":YELLOW
+        })
+        finalEq.move_to(2.8 * RIGHT + 0.6 * UP)
+
+        self.play(Write(solveEq))
+        self.play(ReplacementTransform(solveEq,solveEq2))
+        self.play(Write(finalEq))
+
+
         self.wait(2)
 
 
