@@ -75,6 +75,8 @@ class Problem(Scene):
         pencilDup = VGroup(hexagondup,leaddup)     
         pencil.rotate_about_origin(-np.arctan(0.25))
         pencil.move_to(4.22 * LEFT + 0.77 * UP)
+        pencilDup.rotate_about_origin(-np.arctan(0.25))
+        pencilDup.move_to(4.22 * LEFT + 0.77 * UP)
         
         #self.add(pencil)
 
@@ -112,10 +114,10 @@ class Problem(Scene):
         self.play(DrawBorderThenFill(pencil))
         self.play(GrowFromPoint(kick,-6.11 * RIGHT + 1.96 * UP))
         #create updater for stuff rolling down
-        pencil.initAngSpeed = 0.8
+        pencil.initAngSpeed = 1.3
         pencil.initAngToPlane = PI/3;
         pencil.pointRotate = 4 * LEFT;
-        pencil.effLength = 0.795
+        pencil.effLength = 0.798
         def pencil_updater(obj,dt):
             if(pencil.initAngToPlane >= 2 * PI/3):
                 pencil.initAngToPlane = PI/3
@@ -135,4 +137,177 @@ class Problem(Scene):
         self.wait(1)
         self.play(FadeOut(kick))
         self.wait(5)
+        pencilDup.remove_updater(pencil_updater)
+        pencilDup.initAngSpeed = 1.3
+        pencilDup.initAngToPlane = PI/3;
+        pencilDup.pointRotate = 4 * LEFT;
+        pencilDup.effLength = 0.798
+        def pencilDup_updater(obj,dt):
+            if(pencilDup.initAngToPlane >= 2 * PI/3):
+                pencilDup.initAngToPlane = PI/3
+                pencilDup.initAngSpeed /= 2
+                pencilDup.pointRotate +=pencilDup.effLength * 1/np.sqrt(17) * DOWN +  pencilDup.effLength * 4 / np.sqrt(17) * RIGHT
+
+            angToVert = np.arctan(0.25) + pencilDup.initAngToPlane - PI/2
+            pencilDup.initAngSpeed += 0.4 * np.sin(angToVert) *dt
+            pencilDup.initAngToPlane += pencilDup.initAngSpeed * dt
+            pencilDup.rotate(-1 * pencilDup.initAngSpeed * dt, OUT, about_point = pencilDup.pointRotate)
+
+        
+        self.play(ReplacementTransform(pencil,pencilDup))
+
+        #TODO show the cylinder rolling down with no terminal velocity
+
+        cylinderOut = Circle(radius = 0.8,fill_color = "#F5F5DC", color = WHITE)
+        cylinderIn = Circle(radius = 0.2,fill_opacity = 1, fill_color = "#555555",sheen_factor = 0.5, sheen_direction = UL,stroke_width = 0)
+        cylinderDot=  SmallDot()
+        cylinderDot.move_to(0.7 * UP)
+
+        cylinder = VGroup(cylinderOut,cylinderIn,cylinderDot)
+
+        pencilDup.add_updater(pencilDup_updater)
+        self.add(pencilDup)
+        self.wait(2.26)
+        pencilDup.remove_updater(pencilDup_updater)
+        pencil.suspend_updating()
+
+        #bruh = LEFT * 4 + pencilDup.effLength * 1/np.sqrt(17) * DOWN +  pencilDup.effLength * 4 / np.sqrt(17) * RIGHT,color = YELLOW
+
+        pivot1 = Dot(4 * LEFT + pencilDup.effLength * 1/np.sqrt(17) * DOWN +  pencilDup.effLength * 4 / np.sqrt(17) * RIGHT,color = GREEN)
+        pivot2 = Dot(4 * LEFT + pencilDup.effLength * 1/np.sqrt(17) * DOWN * 2 +  2 * pencilDup.effLength * 4 / np.sqrt(17) * RIGHT,color = BLUE)
+
+        radius1 = Line(4 * LEFT + pencilDup.effLength * 1/np.sqrt(17) * DOWN +  pencilDup.effLength * 4 / np.sqrt(17) * RIGHT,4 * LEFT + pencilDup.effLength * 1/np.sqrt(17) * DOWN +  pencilDup.effLength * 4 / np.sqrt(17) * RIGHT + 0.8 * RIGHT * np.cos(PI/3 - np.arctan(0.25))+ 0.8 * UP * np.sin(PI/3 - np.arctan(0.25)) ,color = GREEN)
+        radius2 = Line(4 * LEFT + 2 * pencilDup.effLength * 1/np.sqrt(17) * DOWN +  2 * pencilDup.effLength * 4 / np.sqrt(17) * RIGHT,4 * LEFT + pencilDup.effLength * 1/np.sqrt(17) * DOWN +  pencilDup.effLength * 4 / np.sqrt(17) * RIGHT + 0.8 * RIGHT * np.cos(PI/3 - np.arctan(0.25))+ 0.8 * UP * np.sin(PI/3 - np.arctan(0.25)) ,color = BLUE)
+
+        pauseButton = SVGMobject("./Images/pausebutton.svg")
+        pauseButton.scale(0.5)
+
+        pauseButton.move_to(6 * RIGHT + 3* UP)
+
+        self.add(pauseButton)
+
+        self.play(FadeIn(pivot1),FadeIn(radius1))
+        
+        velocityVector1=  Line(start= 4 * LEFT + pencilDup.effLength * 1/np.sqrt(17) * DOWN +  pencilDup.effLength * 4 / np.sqrt(17) * RIGHT + 0.8 * RIGHT * np.cos(PI/3 - np.arctan(0.25))+ 0.8 * UP * np.sin(PI/3 - np.arctan(0.25)), end = 4 * LEFT + pencilDup.effLength * 1/np.sqrt(17) * DOWN +  pencilDup.effLength * 4 / np.sqrt(17) * RIGHT + 0.8 * RIGHT * np.cos(PI/3 - np.arctan(0.25))+ 0.8 * UP * np.sin(PI/3 - np.arctan(0.25)) + RIGHT * 1 * np.cos(PI/6 + np.arctan(0.25))+ DOWN * 1 * np.sin(PI/6 + np.arctan(0.25))  ,color = GREEN)
+        velocityVector1.add_tip(tip_length = 0.2)
+        self.play(FadeIn(velocityVector1))
+
+        self.play(FadeIn(pivot2),FadeIn(radius2))
+
+        velocityVector2=  Line(start= 4 * LEFT + pencilDup.effLength * 1/np.sqrt(17) * DOWN +  pencilDup.effLength * 4 / np.sqrt(17) * RIGHT + 0.8 * RIGHT * np.cos(PI/3 - np.arctan(0.25))+ 0.8 * UP * np.sin(PI/3 - np.arctan(0.25)), end = 4 * LEFT + pencilDup.effLength * 1/np.sqrt(17) * DOWN +  pencilDup.effLength * 4 / np.sqrt(17) * RIGHT + 0.8 * RIGHT * np.cos(PI/3 - np.arctan(0.25))+ 0.8 * UP * np.sin(PI/3 - np.arctan(0.25)) + RIGHT * 0.5 * np.cos(PI/6 - np.arctan(0.25))+ UP * 0.5 * np.sin(PI/6 - np.arctan(0.25))  ,color = BLUE)
+        velocityVector2.add_tip(tip_length = 0.2)
+
+        self.play(FadeIn(velocityVector2))
+
+        
+        self.wait(2)
+class Solve(Scene):
+    def construct(self):
+        # for i in range(-7,8):
+        #         for j in range(-4,5):
+        #             locDot = Dot()
+        #             locDot.move_to(RIGHT*i + UP*j)
+        #             self.add(locDot)
+        
+        hexagon = RegularPolygon(fill_opacity = 1, fill_color = "#F5F5DC",color=WHITE)
+        hexagon.scale(0.8)
+        lead = Circle(radius = 0.2,fill_opacity = 1, fill_color = "#555555",sheen_factor = 0.5, sheen_direction = UL,stroke_width = 0)
+        pencil = VGroup(hexagon,lead)    
+        pencil.rotate_about_origin(-np.arctan(0.25))
+        pencil.move_to(4.22 * LEFT + 0.77 * UP)
+
+        hexagon2 = RegularPolygon(fill_opacity = 0.5, fill_color = "#F5F5DC",color=WHITE,opacity = 0.5)
+        hexagon2.scale(0.8)
+        lead2 = Circle(radius = 0.2,fill_opacity = 0.5,opacity=0.5, fill_color = "#555555",sheen_factor = 0.5, sheen_direction = UL,stroke_width = 0)
+        pencil2 = VGroup(hexagon2,lead2)
+        pencil2.rotate_about_origin(-np.arctan(0.25))
+        pencil2.move_to(4.22 * LEFT + 0.77 * UP)
+        #self.add(pencil)
+
+
+        spokes = []
+
+        for i in range(0,6):
+            spoke = Line(ORIGIN,0.8 * np.sin(i * PI/3) * UP + 0.8 * np.cos( i * PI / 3)*RIGHT)
+            spokes.append(spoke)
+
+
+        pencilNewModel = VGroup(*spokes,lead)
+        #self.play(Transform(pencil,pencilNewModel))
+
+        #self.play(Transform(pencil,pencilDup))
+
+        plane = Line(2*DOWN + 4 * RIGHT, 2* DOWN + 4 * RIGHT + 12.36931 * LEFT,stroke_width = 7)
+        plane2 = Line(2 * DOWN + 4 * RIGHT, 2* DOWN + 8 * RIGHT,stroke_width = 7)
+        plane3 = DashedLine(2 * DOWN + 4 * RIGHT, 2 * DOWN + 8 * LEFT,dash_length = 0.25,stroke_width = 7)
+
+        plane.rotate(-1 * np.arctan(0.25),about_point = 2 * DOWN + 4 * RIGHT)
+        #plane = Line(2 * DOWN + 4 * RIGHT, 8 * LEFT + UP)
+
+        angleLabel = TexMobject("\\theta")
+        angleLabel.set_color(YELLOW)
+        angleLabel.move_to(0.5 * RIGHT + 1.6 * DOWN)
+        angleMark = Arc(PI - np.arctan(0.25),angle = np.arctan(0.25),radius=  3,arc_center = 4 * RIGHT + 2 * DOWN)
+        angleMark.set_color(YELLOW)
+
+        kick = Arrow(start = -6.11 * RIGHT + 1.96 * UP, end = -4.68 * RIGHT + 1.6 * UP, color = GREEN)
+
+        self.add(plane,plane2,plane3,angleLabel,angleMark)
+
+        self.wait(0.2)
+        pauseButton = SVGMobject("./Images/pausebutton.svg")
+        pauseButton.scale(0.5)
+
+        pauseButton.move_to(6 * RIGHT + 3* UP)
+        
+        self.add(pencil,pauseButton)
+
+        pencil.initAngSpeed = 1.3
+        pencil.initAngToPlane = PI/3;
+        pencil.pointRotate = 4 * LEFT;
+        pencil.effLength = 0.798
+        def pencil_updater(obj,dt):
+            if(pencil.initAngToPlane >= 2 * PI/3):
+                pencil.initAngToPlane = PI/3
+                pencil.initAngSpeed /= 2
+                pencil.pointRotate +=pencil.effLength * 1/np.sqrt(17) * DOWN +  pencil.effLength * 4 / np.sqrt(17) * RIGHT
+
+            angToVert = np.arctan(0.25) + pencil.initAngToPlane - PI/2
+            pencil.initAngSpeed += 0.4 * np.sin(angToVert) *dt
+            pencil.initAngToPlane += pencil.initAngSpeed * dt
+            pencil.rotate(-1 * pencil.initAngSpeed * dt, OUT, about_point = pencil.pointRotate)
+
+        #TODO Draw velocity vectors
+
+        
+        pencil.add_updater(pencil_updater)
+        self.add(pencil,pencil2)
+        self.remove(pauseButton)
+        self.wait(1.13)
+        pencil.suspend_updating()
+        
+
+        self.add(pauseButton)
+
+        #TODO Draw triangles for the little geometry
+
+        consEnergyEq = TexMobject("\\frac{1}{2}m","v_f^2", "- \\frac{1}{2}m","v_0^2"," =  mgr \\sin","\\theta")
+        consEnergyEq.set_color_by_tex_to_color_map({
+            "v_f^2":GREEN,
+            "v_0^2":GREEN,
+            "\\theta":YELLOW
+        })
+        consEnergyEq.move_to(3 * UP)
+
+        self.play(Write(consEnergyEq))
+
+ 
+        
+        self.wait(2)
+
+
+
+
+
+
 
