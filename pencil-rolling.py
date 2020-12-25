@@ -57,13 +57,13 @@ class Intro(Scene):
         self.wait(0.8)
         self.play(FadeOut(subtitle),FadeOut(title))
 
-class Problem(Scene):
+class Problem2(Scene):
     def construct(self):
-        for i in range(-7,8):
-                for j in range(-4,5):
-                    locDot = Dot()
-                    locDot.move_to(RIGHT*i + UP*j)
-                    self.add(locDot)
+        # for i in range(-7,8):
+        #         for j in range(-4,5):
+        #             locDot = Dot()
+        #             locDot.move_to(RIGHT*i + UP*j)
+        #             self.add(locDot)
         
         hexagon = RegularPolygon(fill_opacity = 1, fill_color = "#F5F5DC",color=WHITE)
         hexagon.scale(0.8)
@@ -107,14 +107,17 @@ class Problem(Scene):
 
         kick = Arrow(start = -6.11 * RIGHT + 1.96 * UP, end = -4.68 * RIGHT + 1.6 * UP, color = GREEN)
         sideLabel = TexMobject("r")
-        sideLabel.move_to(3.5 * LEFT + 1.8 * UP)
+        sideLabel.move_to(3.9 * LEFT + 1.8 * UP)
 
         self.add(plane,plane2)
         self.wait(0.2)
         self.play(Rotate(plane,angle = -1 * np.arctan(0.25),about_point = 2 * DOWN + 4 * RIGHT),FadeIn(plane3),run_time = 2)
         self.play(Write(angleLabel),FadeIn(angleMark))
-        self.play(DrawBorderThenFill(pencil))
-        self.play(Write(sideLabel))
+        self.wait(1.2)
+        self.play(DrawBorderThenFill(pencil),run_time = 4.2)
+        self.wait(1)
+        self.play(Write(sideLabel),run_time = 2)
+        self.wait(3)
         self.play(GrowFromPoint(kick,-6.11 * RIGHT + 1.96 * UP))
         self.remove(sideLabel)
         #create updater for stuff rolling down
@@ -138,9 +141,16 @@ class Problem(Scene):
         
         pencil.add_updater(pencil_updater)
         self.add(pencil)
-        self.wait(1)
-        self.play(FadeOut(kick))
-        self.wait(5)
+        self.wait(0.83)
+        self.play(FadeOut(kick),Flash(4 * LEFT + 3.2 * RIGHT / np.sqrt(17) + DOWN * 0.8 / np.sqrt(17)),run_time = 0.2)
+        self.add_sound("./sound/hitSound.wav",gain=10);
+        self.wait(1.18)
+        self.play(Flash(4 * LEFT + 6.4 * RIGHT / np.sqrt(17) + DOWN * 1.6 / np.sqrt(17)),run_time = 0.2)
+        self.add_sound("./sound/hitSound.wav",gain=10);
+        self.wait(2.43)
+        self.play(Flash(4 * LEFT + 9.6 * RIGHT / np.sqrt(17) + DOWN * 2.4 / np.sqrt(17)),run_time = 0.2)
+        self.add_sound("./sound/hitSound.wav",gain=10);
+        self.wait(2.1)
         pencilDup.remove_updater(pencil_updater)
         pencilDup.initAngSpeed = 1.3
         pencilDup.initAngToPlane = PI/3;
@@ -159,7 +169,16 @@ class Problem(Scene):
 
         
         self.play(ReplacementTransform(pencil,pencilDup))
+        
+        self.wait(5)
 
+        self.play(Rotate(pencilDup,-1 * PI/12,about_point = 4 * RIGHT + 2 * DOWN),Rotate(plane,-1 * PI/12,about_point = 4 * RIGHT + 2 * DOWN),run_time=2)
+        self.play(Rotate(pencilDup,PI/12,about_point = 4 * RIGHT + 2 * DOWN),Rotate(plane,PI/12,about_point = 4 * RIGHT + 2 * DOWN),run_time=2)
+        self.wait(11.2)
+        self.play(Rotate(pencilDup,-1 * PI/12, about_point = 4 * LEFT))
+        self.play(Rotate(pencilDup,PI/12, about_point = 4 * LEFT))
+        self.wait(4)
+        self.play(Indicate(leaddup))
 
 
         #TODO show the cylinder rolling down with no terminal velocity
@@ -174,7 +193,7 @@ class Problem(Scene):
         cylinder.move_to(9 * LEFT + 2.07 * UP)
 
         cylinder.initSpeed = 1.5
-        cylinder.acc = 0.6
+        cylinder.acc = 0.9
         
         def cylinder_updater(obj,dt):
             cylinder.shift(RIGHT * cylinder.initSpeed * 4/np.sqrt(17) * dt+ DOWN * cylinder.initSpeed /np.sqrt(17) * dt)
@@ -183,14 +202,19 @@ class Problem(Scene):
 
         cylinder.add_updater(cylinder_updater)
         self.add(cylinder)
-        self.wait(4.5)
+        self.wait(3.7)
         cylinder.remove_updater(cylinder_updater)
         cylinder.suspend_updating()
         self.play(FadeOut(cylinder))
 
         pencilDup.add_updater(pencilDup_updater)
         self.add(pencilDup)
-        self.wait(2.26)
+        self.wait(0.83)
+        self.play(Flash(4 * LEFT + 3.2 * RIGHT / np.sqrt(17) + DOWN * 0.8 / np.sqrt(17)),run_time = 0.2)
+        self.add_sound("./sound/hitSound.wav",gain=10)
+        self.wait(2.26 - 0.84)
+        self.play(Flash(4 * LEFT + 6.4 * RIGHT / np.sqrt(17) + DOWN * 1.6 / np.sqrt(17)),run_time = 0.2)
+        self.add_sound("./sound/hitSound.wav",gain=10)
         pencilDup.remove_updater(pencilDup_updater)
         pencil.suspend_updating()
 
@@ -213,10 +237,12 @@ class Problem(Scene):
         
         velocityVector1=  Line(start= 4 * LEFT + pencilDup.effLength * 1/np.sqrt(17) * DOWN +  pencilDup.effLength * 4 / np.sqrt(17) * RIGHT + 0.8 * RIGHT * np.cos(PI/3 - np.arctan(0.25))+ 0.8 * UP * np.sin(PI/3 - np.arctan(0.25)), end = 4 * LEFT + pencilDup.effLength * 1/np.sqrt(17) * DOWN +  pencilDup.effLength * 4 / np.sqrt(17) * RIGHT + 0.8 * RIGHT * np.cos(PI/3 - np.arctan(0.25))+ 0.8 * UP * np.sin(PI/3 - np.arctan(0.25)) + RIGHT * 1 * np.cos(PI/6 + np.arctan(0.25))+ DOWN * 1 * np.sin(PI/6 + np.arctan(0.25))  ,color = GREEN)
         velocityVector1.add_tip(tip_length = 0.2)
+
+        self.wait(1)
         self.play(FadeIn(velocityVector1))
 
         self.play(FadeIn(pivot2),FadeIn(radius2))
-
+        self.wait(1)
         velocityVector2=  Line(start= 4 * LEFT + pencilDup.effLength * 1/np.sqrt(17) * DOWN +  pencilDup.effLength * 4 / np.sqrt(17) * RIGHT + 0.8 * RIGHT * np.cos(PI/3 - np.arctan(0.25))+ 0.8 * UP * np.sin(PI/3 - np.arctan(0.25)), end = 4 * LEFT + pencilDup.effLength * 1/np.sqrt(17) * DOWN +  pencilDup.effLength * 4 / np.sqrt(17) * RIGHT + 0.8 * RIGHT * np.cos(PI/3 - np.arctan(0.25))+ 0.8 * UP * np.sin(PI/3 - np.arctan(0.25)) + RIGHT * 0.5 * np.cos(PI/6 - np.arctan(0.25))+ UP * 0.5 * np.sin(PI/6 - np.arctan(0.25))  ,color = BLUE)
         velocityVector2.add_tip(tip_length = 0.2)
 
@@ -305,7 +331,8 @@ class Solve(Scene):
         velocityVector3=  Line(start= 4 * LEFT + 0.8 * RIGHT * np.cos(PI/3 - np.arctan(0.25))+ 0.8 * UP * np.sin(PI/3 - np.arctan(0.25)), end = 4 * LEFT + 0.8 * RIGHT * np.cos(PI/3 - np.arctan(0.25))+ 0.8 * UP * np.sin(PI/3 - np.arctan(0.25)) + RIGHT * 1 * np.cos(PI/6 + np.arctan(0.25))+ DOWN * 1 * np.sin(PI/6 + np.arctan(0.25))  ,color = GREEN)
         velocityVector3.add_tip(tip_length = 0.2)
         
-        velocityVector4=  Line(start= 4 * LEFT +  0.8 * RIGHT * np.cos(PI/3 - np.arctan(0.25))+ 0.8 * UP * np.sin(PI/3 - np.arctan(0.25)) + 0.8 /np.sqrt(17) * UP + 3.2/np.sqrt(17) * LEFT, end = 4 * LEFT + 0.8 * RIGHT * np.cos(PI/3 - np.arctan(0.25))+ 0.8 * UP * np.sin(PI/3 - np.arctan(0.25)) + RIGHT * 0.5 * np.cos(PI/6 - np.arctan(0.25))+ UP * 0.5 * np.sin(PI/6 - np.arctan(0.25))  ,color = BLUE)
+        velocityVector4=  Line(start= 4 * LEFT +  0.8 * RIGHT * np.cos(PI/3 - np.arctan(0.25))+ 0.8 * UP * np.sin(PI/3 - np.arctan(0.25)) + 0.8 /np.sqrt(17) * UP + 3.2/np.sqrt(17) * LEFT, 
+                            end = 4 * LEFT + 0.8 * RIGHT * np.cos(PI/3 - np.arctan(0.25))+ 0.8 * UP * np.sin(PI/3 - np.arctan(0.25)) +0.8 * UP * np.sin(PI/3 - np.arctan(0.25)) ,color = BLUE)
         velocityVector4.add_tip(tip_length = 0.2)
 
         pencil.add_updater(pencil_updater)
@@ -320,7 +347,15 @@ class Solve(Scene):
 
         self.play(FadeIn(velocityVector3),FadeIn(velocityVector4))
 
-        #TODO Draw triangles for the little geometry
+        fourLabel = TexMobject("v_0")
+        threeLabel = TexMobject("v_f")
+        fourLabel.move_to(1.5*UP + 3.5 * LEFT)
+        threeLabel.move_to(2.3 * LEFT)
+        fourLabel.set_color(BLUE)
+        threeLabel.set_color(GREEN)
+
+        self.play(Write(fourLabel))
+        self.play(Write(threeLabel))
 
         eqTriangle = Polygon(pencil2.get_center(),pencil2.get_center() + 0.8 * RIGHT * 4/np.sqrt(17) + 0.8 * DOWN / np.sqrt(17),4 * LEFT,color = YELLOW)
 
@@ -328,8 +363,8 @@ class Solve(Scene):
 
         consEnergyEq = TexMobject("\\frac{1}{2}m","v_f^2", "- \\frac{1}{2}m","v_0^2"," =  mgr \\sin","\\theta")
         consEnergyEq.set_color_by_tex_to_color_map({
-            "v_f^2":BLUE,
-            "v_0^2":GREEN,
+            "v_f^2":GREEN,
+            "v_0^2":BLUE,
             "\\theta":YELLOW
         })
         consEnergyEq.move_to(2 * UP)
@@ -346,7 +381,7 @@ class Solve(Scene):
         self.play(Indicate(velocityVector4))
         self.play(Transform(consEnergyEq,consEnergyEq2))
 
-        self.play(FadeOut(pencil2),FadeOut(eqTriangle))
+        self.play(FadeOut(pencil2),FadeOut(eqTriangle),FadeOut(velocityVector4),FadeOut(velocityVector3),FadeOut(threeLabel),FadeOut(fourLabel))
 
         pivot1 = Dot(4 * LEFT,color = GREEN)
         pivot2 = Dot(4 * LEFT + pencil.effLength * 1/np.sqrt(17) * DOWN +  pencil.effLength * 4 / np.sqrt(17) * RIGHT,color = BLUE)
@@ -369,6 +404,10 @@ class Solve(Scene):
         self.play(FadeIn(velocityVector2))
 
         self.play(Indicate(pivot2))
+        grav = Arrow(start = pencil.get_center(), end  =pencil.get_center() + DOWN,color = GREEN)
+        self.play(GrowArrow(grav))
+        self.wait(2)
+        self.play(FadeOut(grav))
 
         def homotopy_shift_down(x,y,z,t):
             return[x,y-2 * t, z]
@@ -410,7 +449,7 @@ class Solve(Scene):
             "v_0^2":BLUE,
             "\\theta":YELLOW
         })
-        solveEq.move_to(3 * LEFT + UP)
+        solveEq.move_to(3 * LEFT + 0.6 * UP)
 
         solveEq2 = TexMobject("\\frac{1}{2}m","(4v_0^2)", "- \\frac{1}{2}m","v_0^2"," =  mgr \\sin","\\theta")
         solveEq2.set_color_by_tex_to_color_map({
@@ -430,10 +469,121 @@ class Solve(Scene):
         self.play(Write(solveEq))
         self.play(ReplacementTransform(solveEq,solveEq2))
         self.play(Write(finalEq))
-
+        
 
         self.wait(2)
+class Test(Scene):
+    def construct(self):
+        bruh = RegularPolygon()
+        self.play(Flash(ORIGIN))
 
+class Terminal(Scene):
+    def construct(self):
+        hexagon = RegularPolygon(fill_opacity = 1, fill_color = "#F5F5DC",color=WHITE)
+        hexagon.scale(0.8)
+        lead = Circle(radius = 0.2,fill_opacity = 1, fill_color = "#555555",sheen_factor = 0.5, sheen_direction = UL,stroke_width = 0)
+        pencil = VGroup(hexagon,lead)    
+        pencil.rotate_about_origin(-np.arctan(0.25))
+        pencil.move_to(4.22 * LEFT + 0.77 * UP)
+
+        hexagon2 = RegularPolygon(fill_opacity = 0.5, fill_color = "#F5F5DC",color=WHITE,opacity = 0.5)
+        hexagon2.scale(0.8)
+        lead2 = Circle(radius = 0.2,fill_opacity = 0.5,opacity=0.5, fill_color = "#555555",sheen_factor = 0.5, sheen_direction = UL,stroke_width = 0)
+        pencil2 = VGroup(hexagon2,lead2)
+        pencil2.rotate_about_origin(-np.arctan(0.25))
+        pencil2.move_to(4.22 * LEFT + 0.77 * UP)
+        #self.add(pencil)
+
+
+        spokes = []
+
+        for i in range(0,6):
+            spoke = Line(ORIGIN,0.8 * np.sin(i * PI/3) * UP + 0.8 * np.cos( i * PI / 3)*RIGHT)
+            spokes.append(spoke)
+
+
+        pencilNewModel = VGroup(*spokes,lead)
+        #self.play(Transform(pencil,pencilNewModel))
+
+        #self.play(Transform(pencil,pencilDup))
+
+        plane = Line(2*DOWN + 4 * RIGHT, 2* DOWN + 4 * RIGHT + 12.36931 * LEFT,stroke_width = 7)
+        plane2 = Line(2 * DOWN + 4 * RIGHT, 2* DOWN + 8 * RIGHT,stroke_width = 7)
+        plane3 = DashedLine(2 * DOWN + 4 * RIGHT, 2 * DOWN + 8 * LEFT,dash_length = 0.25,stroke_width = 7)
+
+        plane.rotate(-1 * np.arctan(0.25),about_point = 2 * DOWN + 4 * RIGHT)
+        #plane = Line(2 * DOWN + 4 * RIGHT, 8 * LEFT + UP)
+
+        self.add(plane,plane2,plane3)
+
+        angleLabel = TexMobject("\\theta")
+        angleLabel.set_color(YELLOW)
+        angleLabel.move_to(0.5 * RIGHT + 1.6 * DOWN)
+        angleMark = Arc(PI - np.arctan(0.25),angle = np.arctan(0.25),radius=  3,arc_center = 4 * RIGHT + 2 * DOWN)
+        angleMark.set_color(YELLOW)
+
+        kick = Arrow(start = -6.11 * RIGHT + 1.96 * UP, end = -4.68 * RIGHT + 1.6 * UP, color = GREEN)
+        self.add(angleLabel,angleMark)
+
+        self.wait(0.2)
+        pauseButton = SVGMobject("./Images/pausebutton.svg")
+        pauseButton.scale(0.5)
+
+        pauseButton.move_to(6 * RIGHT + 3* UP)
+        
+
+        pencil.initAngSpeed = 1.3
+        pencil.initAngToPlane = PI/3;
+        pencil.pointRotate = 4 * LEFT;
+        pencil.effLength = 0.8
+        def pencil_updater(obj,dt):
+            if(pencil.initAngToPlane >= 2 * PI/3):
+                pencil.initAngToPlane = PI/3
+                #pencil.initAngSpeed /= 2
+                pencil.pointRotate +=pencil.effLength * 1/np.sqrt(17) * DOWN +  pencil.effLength * 4 / np.sqrt(17) * RIGHT
+
+            angToVert = np.arctan(0.25) + pencil.initAngToPlane - PI/2
+            #pencil.initAngSpeed += 0.4 * np.sin(angToVert) *dt
+            pencil.initAngToPlane += pencil.initAngSpeed * dt
+            pencil.rotate(-1 * pencil.initAngSpeed * dt, OUT, about_point = pencil.pointRotate)
+        pencil.add_updater(pencil_updater)
+        self.add(pencil)
+
+        pencils = []
+        velocities = []
+
+        for i in range(0,6):
+            if(i % 2 == 0):
+                hexagonbruh = RegularPolygon(fill_opacity = 0.5, fill_color = "#FF0012",color=WHITE,opacity = 0.5)
+                hexagonbruh.scale(0.8)
+                leadbruh = Circle(radius = 0.2,fill_opacity = 0.5,opacity=0.5, fill_color = "#555555",sheen_factor = 0.5, sheen_direction = UL,stroke_width = 0)
+                pencilbruh = VGroup(hexagonbruh,leadbruh)
+                pencilbruh.rotate_about_origin(-np.arctan(0.25))
+                pencilbruh.move_to(4.22 * LEFT + 0.77 * UP + 3.2 * i * RIGHT / np.sqrt(17) + DOWN * 0.8 * i / np.sqrt(17))
+                pencils.append(pencilbruh)
+            else:
+                hexagonbruh = RegularPolygon(fill_opacity = 0.5, fill_color = "#00b32c",color=WHITE,opacity = 0.5)
+                hexagonbruh.scale(0.8)
+                leadbruh = Circle(radius = 0.2,fill_opacity = 0.5,opacity=0.5, fill_color = "#555555",sheen_factor = 0.5, sheen_direction = UL,stroke_width = 0)
+                pencilbruh = VGroup(hexagonbruh,leadbruh)
+                pencilbruh.rotate_about_origin(-np.arctan(0.25))
+                pencilbruh.move_to(4.22 * LEFT + 0.77 * UP + 3.2 * i * RIGHT / np.sqrt(17) + DOWN * 0.8 * i / np.sqrt(17))
+                pencils.append(pencilbruh)
+            velBruh=  Line(start= 4 * LEFT +  0.8 * RIGHT * np.cos(PI/3 - np.arctan(0.25))+ 0.8 * UP * np.sin(PI/3 - np.arctan(0.25)) + 0.8 /np.sqrt(17) * UP + 3.2/np.sqrt(17) * LEFT + 3.2 * i * RIGHT / np.sqrt(17) + DOWN * 0.8 * i / np.sqrt(17), 
+                            end = 4 * LEFT + 0.8 * RIGHT * np.cos(PI/3 - np.arctan(0.25))+ 0.8 * UP * np.sin(PI/3 - np.arctan(0.25)) +0.8 * UP * np.sin(PI/3 - np.arctan(0.25))+ 3.2/np.sqrt(17) * LEFT + 3.2 * (i+1) * RIGHT / np.sqrt(17) + DOWN * 0.8 * (i+1) / np.sqrt(17) ,color = BLUE)
+            velBruh.add_tip(tip_length = 0.2)
+            velocities.append(velBruh)
+
+        for i in range (0,6):
+            self.add(pencils[i],velocities[i])
+            if(not(i == 0)):
+                self.play(Flash(4 * LEFT + i * 3.2 * RIGHT / np.sqrt(17) + i * DOWN * 0.8 / np.sqrt(17)),run_time = 0.2)
+                self.add_sound("./sound/hitSound.wav",gain=3)
+            self.wait(0.71)
+
+        self.add(pauseButton)
+        self.play(Flash(4 * LEFT + 6 * 3.2 * RIGHT / np.sqrt(17) + 6 * DOWN * 0.8 / np.sqrt(17)),run_time = 0.2)
+        self.add_sound("./sound/hitSound.wav",gain=3)
 
 
 
