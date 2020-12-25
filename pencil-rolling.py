@@ -345,7 +345,9 @@ class Solve(Scene):
 
         self.add(pauseButton)
 
-        self.play(FadeIn(velocityVector3),FadeIn(velocityVector4))
+        self.wait(3)
+
+        self.play(FadeIn(velocityVector3),FadeIn(velocityVector4),run_time = 1.8)
 
         fourLabel = TexMobject("v_0")
         threeLabel = TexMobject("v_f")
@@ -354,10 +356,13 @@ class Solve(Scene):
         fourLabel.set_color(BLUE)
         threeLabel.set_color(GREEN)
 
-        self.play(Write(fourLabel))
-        self.play(Write(threeLabel))
+        self.play(Write(fourLabel),run_time = 2)
+        self.wait(18)
+        self.play(Write(threeLabel),run_time = 2)
 
-        eqTriangle = Polygon(pencil2.get_center(),pencil2.get_center() + 0.8 * RIGHT * 4/np.sqrt(17) + 0.8 * DOWN / np.sqrt(17),4 * LEFT,color = YELLOW)
+        eqTriangle = Polygon(pencil2.get_center(),pencil2.get_center() + 0.8 * RIGHT * 4/np.sqrt(17) + 0.8 * DOWN / np.sqrt(17),4 * LEFT,color = RED)
+
+        self.wait(30)
 
         self.play(DrawBorderThenFill(eqTriangle))
 
@@ -376,12 +381,17 @@ class Solve(Scene):
         })
         consEnergyEq2.move_to(3 * LEFT + 3 * UP)
 
-        self.play(Write(consEnergyEq))
-        self.play(Indicate(velocityVector3))
-        self.play(Indicate(velocityVector4))
+        self.wait(14)
+
+        self.play(Write(consEnergyEq),run_time = 4)
+        self.play(Indicate(velocityVector3),run_time = 2)
+        self.wait(3)
+        self.play(Indicate(velocityVector4),run_time = 2)
         self.play(Transform(consEnergyEq,consEnergyEq2))
 
         self.play(FadeOut(pencil2),FadeOut(eqTriangle),FadeOut(velocityVector4),FadeOut(velocityVector3),FadeOut(threeLabel),FadeOut(fourLabel))
+
+        self.wait(7.5)
 
         pivot1 = Dot(4 * LEFT,color = GREEN)
         pivot2 = Dot(4 * LEFT + pencil.effLength * 1/np.sqrt(17) * DOWN +  pencil.effLength * 4 / np.sqrt(17) * RIGHT,color = BLUE)
@@ -405,8 +415,9 @@ class Solve(Scene):
 
         self.play(Indicate(pivot2))
         grav = Arrow(start = pencil.get_center(), end  =pencil.get_center() + DOWN,color = GREEN)
+        self.wait(6)
         self.play(GrowArrow(grav))
-        self.wait(2)
+        self.wait(11)
         self.play(FadeOut(grav))
 
         def homotopy_shift_down(x,y,z,t):
@@ -431,15 +442,22 @@ class Solve(Scene):
 
         consOfAngMEq1.move_to(3 * LEFT + 1.8 * UP)
         consOfAngMEq2.move_to(3 * LEFT + 1.8 * UP)
+        
+        self.wait(5)
 
         self.play(Write(consOfAngMEq1))
+
         self.play(Indicate(radius1))
         self.play(Indicate(velocityVector1))
         self.play(Indicate(radius2))
         self.play(Indicate(velocityVector2))
 
+        self.wait(6)
+
         self.play(FadeIn(momentArmInitial))
         self.play(Indicate(momentArmInitial))
+
+        self.wait(5)
 
         self.play(ReplacementTransform(consOfAngMEq1,consOfAngMEq2))
 
@@ -465,10 +483,17 @@ class Solve(Scene):
             "\\theta":YELLOW
         })
         finalEq.move_to(2.8 * RIGHT + 0.6 * UP)
+        finalEq2 = TexMobject("\\Longrightarrow","v_f^2","= \\frac{8}{3}gr\\sin","\\theta")
+        finalEq2.set_color_by_tex_to_color_map({
+            "v_f^2" : GREEN,
+            "\\theta":YELLOW
+        })
+        finalEq2.move_to(2.8 * RIGHT + 0.7 * DOWN)
 
-        self.play(Write(solveEq))
+        self.play(Write(solveEq),run_time=2.5)
         self.play(ReplacementTransform(solveEq,solveEq2))
-        self.play(Write(finalEq))
+        self.play(Write(finalEq),run_time = 2)
+        self.play(Write(finalEq2),run_time=2)
         
 
         self.wait(2)
@@ -586,7 +611,66 @@ class Terminal(Scene):
         self.add_sound("./sound/hitSound.wav",gain=3)
 
 
+class EndingQuestions(Scene):
+    def construct(self):
+        Title = TextMobject("Ending Questions")
+        Title.set_color(YELLOW)
+        Title.scale(1.6)
+        Title.move_to(3 * UP)
+
+        question1 = TextMobject("1) What is the angle condition such that the hexagon doesn't lose contact?")
+        question2 = TextMobject("2) What is the minimum angle for the terminal velocity to be nonzero?")
+        question1.scale(0.8)
+        question2.scale(0.8)
+        
+        question1.move_to(2 * UP + 0.2 * LEFT)
+        question2.move_to(1 * UP + 0.5 * LEFT)
 
 
+        self.play(FadeIn(Title))
+        self.wait(7)
+        self.play(Write(question1),run_time = 4)
+        self.wait(8)
+        self.play(Write(question2),run_time = 4)
+        self.wait(5)
+        self.play(FadeOut(Title),FadeOut(question1),FadeOut(question2))
+
+
+class BarGraph(Scene):
+    def construct(self):
+        line = Line(2 * LEFT + DOWN, 2 * RIGHT + DOWN)
+        label1 = TextMobject("GPE")
+        label1.scale(0.5)
+        label1.move_to(1.3 * DOWN + 1 * LEFT)
+        label2 = TextMobject("KE")
+        label2.scale(0.5)
+        label2.move_to(1.3 * DOWN + 1 * RIGHT)
+
+        gpe=  Rectangle(width = 1,height=  2,fill_color = BLUE,fill_opacity = 1)
+        gpe.move_to(LEFT)
+        gpe.align_to(line,direction = DOWN)
+
+        KE = Rectangle(width = 1, height = 2, fill_color = RED, fill_opacity = 1)
+        KE.move_to(RIGHT)
+        KE.align_to(line,direction = DOWN)
+
+        self.add(line,label1,label2,gpe,KE)
+
+        def gpeupdater(obj,dt):
+            obj.stretch(0.98,1)
+            obj.align_to(line,direction=  DOWN)
+        self.wait(2)
+
+        heat=  TextMobject("Heat")
+        heat.set_color(RED)
+        heat.move_to(LEFT)
+        heat.scale(0.5)
+
+        gpe.add_updater(gpeupdater)
+        self.add(gpe)
+        self.wait(1.5)
+        self.play(FadeIn(heat),run_time = 0.5)
+        self.wait(1)
+        self.play(FadeOut(heat))
 
 
