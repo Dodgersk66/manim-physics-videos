@@ -180,25 +180,26 @@ class introduction_scene(Scene):
         question1 = TextMobject("Part 1. ","How much does a slinky stretch when held from one end?")
         question1.set_color_by_tex_to_color_map({"Part 1. " : YELLOW})
         question1.scale(0.8)
+        question1.move_to(2 * UP)
 
         question2 = TextMobject("Part 2. ","How does a slinky drop?")
         question2.set_color_by_tex_to_color_map({"Part 2. " : YELLOW})
-        question2.move_to(1*DOWN)
+        question2.move_to(0.5*UP)
         question2.scale(0.8)
 
         question3 = TextMobject("Part 3. ","What happens when a slinky is hung from both ends?")
         question3.set_color_by_tex_to_color_map({"Part 3. " : YELLOW})
-        question3.move_to(2*DOWN)
+        question3.move_to(DOWN)
         question3.scale(0.8)
 
-        self.play(Write(starting_question))
-        self.wait(1.3)
-        self.play(Write(starting_answer))
-        self.play(Write(problem_state_massless))
-        self.wait(0.8)
-        self.play(Transform(problem_state_massless,problem_state_massive))
-        self.wait(0.6)
-        self.play(GrowFromCenter(line))
+        # self.play(Write(starting_question))
+        # self.wait(1.3)
+        # self.play(Write(starting_answer))
+        # self.play(Write(problem_state_massless))
+        # self.wait(0.8)
+        # self.play(Transform(problem_state_massless,problem_state_massive))
+        # self.wait(0.6)
+        # self.play(GrowFromCenter(line))
 
         self.play(FadeIn(question1))
         self.wait(0.9)
@@ -208,17 +209,99 @@ class introduction_scene(Scene):
         self.wait(0.9)
 
 
-        def topStuffMove(x,y,z,t):
-            return[x,y+2.5*t,z]
-        def topQuestionMove(x,y,z,t):
-            return[x,y+1.9*t,z]
-        def midQuestionMove(x,y,z,t):
-            return[x,y+1.3*t,z]
-        def botQuestionMove(x,y,z,t):
-            return[x,y+0.7*t,z]
+        label1 = TextMobject("Part 1")
+        label1.set_color(YELLOW)
+        label1.move_to(4 * LEFT + UP)
+        label2 = TextMobject("Part 2")
+        label2.set_color(YELLOW)
+        label2.move_to(UP)
+        label3 = TextMobject("Part 3")
+        label3.set_color(YELLOW)
+        label3.move_to(4 * RIGHT + UP)
 
-        self.play(Homotopy(topStuffMove,line),Homotopy(topStuffMove,starting_question),Homotopy(topStuffMove,starting_answer),Homotopy(topStuffMove,problem_state_massless),Homotopy(topQuestionMove,question1),Homotopy(midQuestionMove,question2),Homotopy(botQuestionMove,question3))
+        rect1 = Rectangle(width = 2.4, height = 1.35)
+        rect1.move_to(4 * LEFT + 0.25 * DOWN)
+        rect1.scale(1.3)
+        rect2 = Rectangle(width = 2.4, height = 1.35)
+        rect2.move_to(0.25 * DOWN)
+        rect2.scale(1.3)
+        rect3 = Rectangle(width = 2.4, height = 1.35)
+        rect3.move_to(4 * RIGHT + 0.25 * DOWN)
+        rect3.scale(1.3)
+
+        self.play(ReplacementTransform(question1,label1),ReplacementTransform(question2,label2),ReplacementTransform(question3,label3),FadeIn(rect1),FadeIn(rect2),FadeIn(rect3))
+       
+
+        #self.play(Homotopy(topStuffMove,line),Homotopy(topStuffMove,starting_question),Homotopy(topStuffMove,starting_answer),Homotopy(topStuffMove,problem_state_massless),Homotopy(topQuestionMove,question1),Homotopy(midQuestionMove,question2),Homotopy(botQuestionMove,question3))
         self.wait(1)
+
+class SlinkyModel(Scene):
+    #TODO Explain ZLS and stuff
+    def construct(self):
+        for i in range(-7,8):
+                for j in range(-4,5):
+                    locDot = Dot()
+                    locDot.move_to(RIGHT*i + UP*j)
+                    self.add(locDot)
+
+        header = TextMobject("Spring Model")
+        header.set_color(YELLOW)
+        header.move_to(4.5 * LEFT + 3.2 * UP)
+        header.scale(1.5)
+
+
+        springModel = Spring(turns = 30, start = LEFT, finish = RIGHT)
+
+        massLabel = TexMobject("M")
+        massLabel.move_to(2 * UP)
+        springModel.counter = 0
+
+        def stretch_updater(d,dt):
+            time = springModel.counter/60
+
+            d.stretch_to_fit_width(5 - 5 * np.exp(-time -0.510825624))   
+            d.align_to(LEFT,LEFT)
+            springModel.counter +=1;
+
+        def stretch_updater2(d,dt):
+            time = springModel.counter/60
+
+            d.stretch_to_fit_width(5 - 5 * np.exp(time-8-0.510825624))   
+            d.align_to(LEFT,LEFT)
+
+            springModel.counter += 1
+        hand = ImageMobject("./Images/hand_left.png")
+        hand.scale(0.5)
+
+        def hand_updater(d,dt):
+            d.align_to(springModel.get_right(),direction = LEFT, alignment_vect=RIGHT)
+
+        self.add(springModel,massLabel,header)
+        self.wait(1)
+        
+        hand.add_updater(hand_updater)
+        springModel.add_updater(stretch_updater)
+        self.add(springModel)
+        self.add(hand)
+        self.wait(4)
+        hand.remove_updater(hand_updater)
+        springModel.remove_updater(stretch_updater)
+        springModel.add_updater(stretch_updater2)
+        self.add(springModel)
+        self.play(FadeOut(hand))
+        self.wait(3)
+
+        fxFunc = Graph
+
+GraphScene
+
+
+
+
+
+
+
+
 
 
 
@@ -462,7 +545,7 @@ class SolvingScene(Scene):
 
         self.play(Homotopy(shiftLeft,subtitle),FadeIn(vertDiv))
         self.add(floor)
-        self.wait(1.5)
+        self.wait(1.6)
 
 
 
