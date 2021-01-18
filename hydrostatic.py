@@ -21,12 +21,12 @@ class Container(VMobject):
 class HydrostaticParadox(Scene):
     def construct(self):
         
-        for i in range(-8, 9):
-            for j in range(-4,5):
-                if(i == 0 and j == 0):
-                    self.add(Dot(color = RED))
-                    continue;
-                self.add(Dot(i * RIGHT + j * UP))
+        # for i in range(-8, 9):
+        #     for j in range(-4,5):
+        #         if(i == 0 and j == 0):
+        #             self.add(Dot(color = RED))
+        #             continue;
+        #         self.add(Dot(i * RIGHT + j * UP))
 
         title = TextMobject("Problem 1: ", "Hydrostatic Paradox")
         title.set_color_by_tex_to_color_map({
@@ -130,6 +130,8 @@ class HydrostaticParadox(Scene):
 
         self.play(DrawBorderThenFill(container1),DrawBorderThenFill(container2),DrawBorderThenFill(container3))
         self.wait(1)
+
+        self.play(FadeIn(botLength1),FadeIn(botLength2),FadeIn(botLength3),FadeIn(botLength1Label),FadeIn(botLength2Label),FadeIn(botLength3Label))
         botLength1Label.add_updater(label_updater)
         botLength1.add_updater(arrow_updater)
         botLength2Label.add_updater(label_updater2)
@@ -148,7 +150,54 @@ class HydrostaticParadox(Scene):
         waterLine = DashedLine(6 * LEFT + 0.6 * UP, 6 * RIGHT + 0.6 * UP)
         self.play(DrawBorderThenFill(waterLine))
 
+        hydroEq = TexMobject("\\frac{\\mathrm d P}{\mathrm d z} = - \\rho g")
+        hydroEq2 = TexMobject("\\Delta P = - \\rho g \\Delta z")
+        pressureEq = TexMobject("F = PA")
+        hydroEq.move_to(3 * UP + 4 * RIGHT)
+        hydroEq2.move_to(3 * UP + 4 * RIGHT)
+        pressureEq.move_to(2 * UP + 4 * RIGHT)
 
+        relation1 = TexMobject("PA \\, \\, \\qquad = \\, \\qquad \\, PA \\,\\qquad\\,   = \\, \\qquad \\, PA")
+        relation2 = TexMobject("F_1 \\,\\, \\,\\qquad\\, = \\,\\qquad \\,\\,\\, F_2\\, \\,\\,\\,\\qquad = \\,\\,\\,\\, \\qquad F_3 ")
+
+        f1 = Line(4 * LEFT + DOWN, 4 * LEFT + 2 * DOWN,color = GREEN)
+        f2 = Line(DOWN, 2 * DOWN,color = GREEN)
+        f3 = Line(4 * RIGHT + DOWN, 4 * RIGHT + 2 * DOWN,color = GREEN)
+        f1.add_tip()
+        f2.add_tip()
+        f3.add_tip()
+
+
+        relation1.move_to(3 * DOWN)
+        relation2.move_to(3 * DOWN)
+        self.play(Write(hydroEq))
+        self.play(ReplacementTransform(hydroEq,hydroEq2))
+        self.play(Write(pressureEq))
+        self.play(GrowFromPoint(f1,f1.get_top()),GrowFromPoint(f2,f2.get_top()),GrowFromPoint(f3,f3.get_top()))
+        self.wait(1)
+        self.play(Write(relation1),run_time = 2)
+        self.play(ReplacementTransform(relation1,relation2))
+        self.wait(1)
+        self.play(Indicate(container1),run_time = 1.8)
+        self.play(Indicate(container2),run_time = 1.8)
+        self.play(Indicate(container2),run_time = 1.8)
+        self.play(Indicate(container3),run_time = 1.8)
+        self.wait(1)
+
+        question = TextMobject("If the volumes are different,") 
+        question2 = TextMobject("how can the forces at the bottoms be the same?")
+        question.scale(0.8)
+        question2.scale(0.8)
+        question.move_to(2.3 * UP)
+        question.align_to(6 * LEFT,LEFT)
+        
+        question2.move_to(1.9 * UP)
+        question2.align_to(6 * LEFT, LEFT)
+
+        self.play(Write(question))
+        self.play(Write(question2))
+        self.wait(1)
+    
 
         
 
@@ -260,7 +309,9 @@ class Problem2(Scene):
         self.play(DrawBorderThenFill(stand))
         self.wait(1)
         self.play(GrowFromPoint(stringPing,stringPing.get_bottom()),FadeIn(stringRock,stringRock.get_top()))
+        self.wait(1)
         self.play(Write(question))
+        self.wait(1)
         self.play(Rotate(balance, angle = -PI/22, about_point = DOWN),Rotate(plate1, angle = -PI/22, about_point = DOWN),Rotate(balance, angle = -PI/22, about_point = DOWN),
                 Rotate(plate2, angle = -PI/22, about_point = DOWN),Rotate(container1, angle = -PI/22, about_point = DOWN),Rotate(container2, angle = -PI/22, about_point = DOWN),
                 Rotate(water1, angle = -PI/22, about_point = DOWN),Rotate(water2, angle = -PI/22, about_point = DOWN),Rotate(stringPing, angle = -PI/22, about_point = DOWN),Rotate(pingPong, angle = -PI/22, about_point = DOWN))
@@ -270,16 +321,17 @@ class Problem2(Scene):
         
         self.wait(1)
         self.play(Write(questionPart2))
+        self.wait(1)
         self.play(Rotate(balance, angle = PI/22, about_point = DOWN),Rotate(plate1, angle = PI/22, about_point = DOWN),Rotate(balance, angle = PI/22, about_point = DOWN),
                 Rotate(plate2, angle = PI/22, about_point = DOWN),Rotate(container1, angle = PI/22, about_point = DOWN),Rotate(container2, angle = PI/22, about_point = DOWN),
                 Rotate(water1, angle = PI/22, about_point = DOWN),Rotate(water2, angle = PI/22, about_point = DOWN),Rotate(stringPing, angle = PI/22, about_point = DOWN),Rotate(pingPong, angle = PI/22, about_point = DOWN))
         self.play(Rotate(balance, angle = -PI/22, about_point = DOWN),Rotate(plate1, angle = -PI/22, about_point = DOWN),Rotate(balance, angle = -PI/22, about_point = DOWN),
                 Rotate(plate2, angle = -PI/22, about_point = DOWN),Rotate(container1, angle = -PI/22, about_point = DOWN),Rotate(container2, angle = -PI/22, about_point = DOWN),
                 Rotate(water1, angle = -PI/22, about_point = DOWN),Rotate(water2, angle = -PI/22, about_point = DOWN),Rotate(stringPing, angle = -PI/22, about_point = DOWN),Rotate(pingPong, angle = -PI/22, about_point = DOWN))
+        self.wait(1)
 
 class Perpet(Scene):
     def construct(self):
-        bruh = Circle()
         title = TextMobject("Problem 3: ", "A Perpetual Motion Machine")
         title.set_color_by_tex_to_color_map({
             "Problem 3: " : YELLOW,
@@ -294,8 +346,123 @@ class Perpet(Scene):
         })
         titleScaledAndMoved.move_to(3.3 * UP + 3.4 * LEFT)
         titleScaledAndMoved.align_to(6.5 * LEFT, LEFT)
+        # self.add(Dot(ORIGIN))
+        # for i in range(-8,9):
+        #     self.add(Line(4 * DOWN + i * RIGHT, 4 * UP + i * RIGHT))
+        #     self.add(DashedLine(4 * DOWN + (i + 0.5) * RIGHT, 4 * UP + (i + 0.5) * RIGHT))
+        # for i in range(-4,5):
+        #     self.add(Line(i * UP + 8 * LEFT, -8 * LEFT + i * UP))
+        #     self.add(DashedLine((i + 0.5) * UP + 8 * LEFT, -8 * LEFT + (i + 0.5) * UP))
+
+        pulleyTop = VGroup(Line(ORIGIN, 0.8 * np.cos(1.26) * RIGHT + 0.8 * np.sin(1.26) *UP,color = GRAY),Line(ORIGIN, 0.8 * np.cos(1.26 + 2 * PI / 5) * RIGHT + 0.8 * np.sin(1.26 + 2 * PI / 5) *UP,color = GRAY),Line(ORIGIN, 0.8 * np.cos(1.26 + 4 * PI / 5) * RIGHT + 0.8 * np.sin(1.26 + 4 * PI / 5) *UP,color = GRAY),
+                    Line(ORIGIN, 0.8 * np.cos(1.26 + 6 * PI / 5) * RIGHT + 0.8 * np.sin(1.26 + 6 * PI / 5) *UP,color = GRAY), Line(ORIGIN, 0.8 * np.cos(1.26 + 8 * PI / 5) * RIGHT + 0.8 * np.sin(1.26 + 8 * PI / 5) *UP,color = GRAY),
+                    Circle(radius = 0.55, fill_color=  LIGHT_GRAY, color = LIGHT_GRAY, fill_opacity = 1), Circle(radius=  0.4, color = BLACK,stroke_width = 2), Circle(radius = 0.2, color = BLACK,stroke_width = 2),Line(-0.07 * UP, 0.07 * UP,color = BLACK),Line(-0.07 * RIGHT, 0.07 * RIGHT,color = BLACK))
+        pulleyTop.move_to(1.9 * LEFT + 1.5 * UP)
+        pulleyBot = VGroup(Line(ORIGIN, 0.8 * np.cos( -1 * 1.26) * RIGHT + 0.8 * np.sin( -1 * 1.26) *UP,color = GRAY),Line(ORIGIN, 0.8 * np.cos( -1 * 1.26 + 2 * -1 * PI / 5) * RIGHT + 0.8 * np.sin( -1 * 1.26 + 2 * -1 * PI / 5) *UP,color = GRAY),Line(ORIGIN, 0.8 * np.cos( -1 * 1.26 + 4 * -1 * PI / 5) * RIGHT + 0.8 * np.sin( -1 * 1.26 + 4 * -1 * PI / 5) *UP,color = GRAY),
+                    Line(ORIGIN, 0.8 * np.cos( -1 * 1.26 + 6 * -1 * PI / 5) * RIGHT + 0.8 * np.sin( -1 * 1.26 + 6 * -1 * PI / 5) *UP,color = GRAY), Line(ORIGIN, 0.8 * np.cos( -1 * 1.26 + 8 * -1 * PI / 5) * RIGHT + 0.8 * np.sin( -1 * 1.26 + 8 * -1 * PI / 5) *UP,color = GRAY),Circle(radius = 0.55, fill_color=  LIGHT_GRAY, color = LIGHT_GRAY, fill_opacity = 1), Circle(radius=  0.4, color = BLACK,stroke_width = 2), Circle(radius = 0.2, color = BLACK,stroke_width = 2),Line(-0.07 * UP, 0.07 * UP,color = BLACK),Line(-0.07 * RIGHT, 0.07 * RIGHT,color = BLACK))
+        pulleyBot.move_to(1.9 * LEFT + 1.5 * DOWN)
+
+        containerPart1 = Container(3.75 * LEFT + 1.5 * UP, 3.75  * LEFT + DOWN,3.75 * LEFT + DOWN, 3.75 * LEFT + 1.5 * DOWN,3.75 * LEFT + 1.5 * DOWN, 2.75 * LEFT+ 1.25 * DOWN, 1.75 * LEFT + 1.5 * DOWN,1.75 * LEFT + 1.5 * DOWN, 1.75 * LEFT + 1.5 * UP)
+        mask = Container(2.5 * LEFT +  1.25 * DOWN + DOWN / 16,2.75 * LEFT + 1.25 * DOWN,3 * LEFT + 1.25 * DOWN + 1/16 * DOWN, 2.75 * LEFT + 1.25 * DOWN,color = BLACK,stroke_width = 4.85,sheen_factor = 0)
+
+        #string = Polygon(2.75 * LEFT + 1.5 * DOWN, 1.5 * UP + 2.75 * LEFT, 1.9 * LEFT + 2.45 * UP,1.05 * LEFT + 1.5 * UP, 1.05 * LEFT, 1.05 * LEFT+ 1.5 * DOWN,2.45 * DOWN + 1.9 * LEFT)
+        #string.make_smooth()
+        string = Polygon(2.75 * LEFT + 1.5 * DOWN, 1.5 * UP + 2.75 * LEFT)
+        string.add_cubic_bezier_curve(1.5 * UP + 2.75 * LEFT,1.5 * UP + 2.75 * LEFT + 0.5 *  UP, 1.9 * LEFT + 2.4 * UP + 0.5 * LEFT,1.9 * LEFT + 2.4 * UP)
+        string.add_cubic_bezier_curve(1.9 * LEFT + 2.4 * UP, + 1.9 * LEFT + 2.4 * UP + 0.5 *  RIGHT,1.05 * LEFT + 1.5 * UP + 0.5 * UP, 1.05 * LEFT + 1.5 * UP)
+        string.add_cubic_bezier_curve(1.05 * LEFT + 1.5 * UP,1.05 * LEFT, 1.05 * LEFT, 1.05 * LEFT+ 1.5 * DOWN)
+        string.add_cubic_bezier_curve(1.05 * LEFT+ 1.5 * DOWN, 1.05 * LEFT + 2 * DOWN, 2.4  *DOWN + 1.4 * LEFT,2.4 * DOWN + 1.9 * LEFT )
+        string.add_cubic_bezier_curve(2.4 * DOWN + 1.9 * LEFT, 2.4 * DOWN + 2.4 * LEFT, 2.75 * LEFT + 2 * DOWN, 2.75 * LEFT + 1.5 * DOWN)
         
+        pingPongs = []
+
+        for i  in range(0,12):
+            pingPongs.append(Circle(radius = 0.25, fill_opacity = 1, fill_color = WHITE, color = WHITE))
+            pingPongs[i].move_to(1.05 * LEFT)
+            pingPongs[i].speed = 0.2
+            pingPongs[i].acc = 0.6
+        pingPongs[1].move_to(DOWN + 1.05 * LEFT)
+        pingPongs[2].move_to(UP + 1.05 * LEFT)
+        pingPongs[3].move_to(1.5 * DOWN + 1.9 * LEFT + 0.8 * np.cos(0.625) * RIGHT + np.sin(0.625) * DOWN * 0.8)
+        pingPongs[4].move_to(1.5 * DOWN + 1.9 * LEFT + RIGHT * np.cos(1.875) * 0.8 + DOWN * 0.8 * np.sin(1.875))
+        pingPongs[5].move_to(1.5 * DOWN + 1.9 * LEFT + RIGHT * np.cos(3.125) * 0.8 + DOWN * 0.8 * np.sin(3.125))
+        pingPongs[6].move_to(2.75 * LEFT + 1.5 * DOWN + 0.9867258771 * UP)
+        pingPongs[7].move_to(2.75 * LEFT + 1.5 * DOWN + 1.9867258771 * UP)
+        pingPongs[8].move_to(2.75 * LEFT + 1.5 * DOWN + 2.9867258771 * UP)
+        pingPongs[9].move_to(1.5 * UP + 1.9 * LEFT + 0.8 * np.cos(0.625) * RIGHT + np.sin(0.625) * UP * 0.8)
+        pingPongs[10].move_to(1.5 *  UP+ 1.9 * LEFT + RIGHT * np.cos(1.875) * 0.8 + UP * 0.8 * np.sin(1.875))
+        pingPongs[11].move_to(1.5 * UP + 1.9 * LEFT + RIGHT * np.cos(3.125) * 0.8 + UP * 0.8 * np.sin(3.125))
+
+        # for i in range(0,12):
+        #     pingPongs[i].move_to(pingPongs[i].get_center() + 0.05 * LEFT)
+
+        def ping_pong_updater(d,dt):
+            d.speed += d.acc * dt;
+            if(d.get_center()[1] <= -1.5):
+                d.rotate(-1 * d.speed / 0.8 * dt,axis = OUT, about_point = 1.5 * DOWN + 1.9 * LEFT)
+            
+            elif(d.get_center()[1] >= 1.5):
+                d.rotate(-1 * d.speed / 0.8 * dt,axis = OUT, about_point = 1.5 * UP + 1.9 * LEFT)
+         
+            else:
+                if(d.get_center()[0] <= -2):
+                    d.move_to(d.get_center() + d.speed * dt * UP)
+                else:
+                    d.move_to(d.get_center() - d.speed * dt * UP)
+
+
+        def disc_rotate(d,dt):
+            rotSpeed = pingPongs[0].speed / 0.8
+            d.rotate(rotSpeed * dt * -1, axis = OUT, about_point = d.get_center())
         
+
+
+        self.add(title)
+        self.play(ReplacementTransform(title,titleScaledAndMoved))
+        self.wait(1)
+        self.add(containerPart1, mask)
+        self.add(pulleyTop,pulleyBot,string)
+        self.wait(1)
+        for i in range(0, 12):
+            pingPongs[i].add_updater(ping_pong_updater)
+        for i in range(0,12):
+            self.add(pingPongs[i])
+        pulleyTop.add_updater(disc_rotate)
+        pulleyBot.add_updater(disc_rotate)
+        self.add(pulleyBot,pulleyTop)
+        self.wait(8)
+
+        enArrow = Arrow(ORIGIN, 2 * RIGHT)
+        energyTxt = TexMobject("\\infty")
+        energyTxt.move_to(3 * RIGHT)
+        energyTxt.scale(3)
+        energy = SVGMobject("./images/lightning-bolt.svg",fill_color = YELLOW)
+        energy.move_to(5 * RIGHT)
+        energy.scale(1.5)
+
+        self.play(GrowArrow(enArrow))
+        self.play(Write(energyTxt),DrawBorderThenFill(energy))
+
+        for i in range(0,12):
+            pingPongs[i].remove_updater(ping_pong_updater)
+
+        pulleyBot.remove_updater(disc_rotate)
+        pulleyTop.remove_updater(disc_rotate)
+
+        for i in range(0,12):
+            self.remove(pingPongs[i])
+        
+        self.wait(1)
+        
+        deny = Line(5.5 * RIGHT + 2 * DOWN, 2.5 * RIGHT+ 2 * UP, color = RED,stroke_width = 6)
+        self.play(GrowFromPoint(deny,5.5 * RIGHT + 2 * DOWN))
+
+        question = TextMobject("What's the issue with this perpetual motion machine?")
+        question.move_to(3 * DOWN)
+        self.play(Write(question),run_time =  2)
+        self.wait(1)
+
+
 
 
 
