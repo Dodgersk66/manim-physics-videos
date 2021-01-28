@@ -74,23 +74,17 @@ class Container(VMobject):
 class HydrostaticParadox(Scene):
     def construct(self):
         
-        for i in range(-8, 9):
-            for j in range(-4,5):
-                if(i == 0 and j == 0):
-                    self.add(Dot(color = RED))
-                    continue;
-                self.add(Dot(i * RIGHT + j * UP))
 
-        title = TextMobject("Solution 1: ", "Hydrostatic Paradox")
+        title = TextMobject("Problem 1: ", "Hydrostatic Paradox")
         title.set_color_by_tex_to_color_map({
-            "Solution 1: " : YELLOW,
+            "Problem 1: " : YELLOW,
             "Hydrostatic Paradox" : WHITE
         })
         title.scale(1.6)
 
-        titleScaledAndMoved = TextMobject("Solution 1: ", "Hydrostatic Paradox")
+        titleScaledAndMoved = TextMobject("Problem 1: ", "Hydrostatic Paradox")
         titleScaledAndMoved.set_color_by_tex_to_color_map({
-            "Solution 1: " : YELLOW,
+            "Problem 1: " : YELLOW,
             "Hydrostatic Paradox" : WHITE
         })
         titleScaledAndMoved.move_to(3.3 * UP + 3 * LEFT)
@@ -152,7 +146,105 @@ class HydrostaticParadox(Scene):
 
         ### Solution from here ###
 
+        forceVecsLeft = []
+
+        for i in range(1, 5):
+            bruh = Line(5 * LEFT + 2 * DOWN + 0.5 * i * UP + 0.05 * i * LEFT,5 * LEFT + 2 * DOWN + 0.5 * i * UP + 0.05 * i * LEFT + 0.2 * RIGHT * (5.2-i) + 0.02 * UP * (5.2-i),color = BLACK, tip_length = 0.2)
+            bruh.add_tip()
+            forceVecsLeft.append(bruh)
+        for i in range(1, 5):
+            bruh = Line(3 * LEFT + 2 * DOWN + 0.5 * i * UP + 0.05 * i * RIGHT,3 * LEFT + 2 * DOWN + 0.5 * i * UP + 0.05 * i * RIGHT + 0.2 * LEFT * (5.2-i) + 0.02 * UP * (5.2-i),color = BLACK, tip_length = 0.2)
+            bruh.add_tip()
+            forceVecsLeft.append(bruh)
+        arrowsLeft = VGroup(*forceVecsLeft)
+        self.play(FadeIn(arrowsLeft))
+        self.wait(1)
+
+        forceVecsMid = []
+        for i in range(1, 5):
+            bruh = Line(LEFT + 2 * DOWN + 0.5 * i * UP,LEFT + 2 * DOWN + 0.5 * i * UP + 0.2 * RIGHT * (5.2-i),color = BLACK, tip_length = 0.2)
+            bruh.add_tip()
+            forceVecsMid.append(bruh)
+        for i in range(1, 5):
+            bruh = Line(RIGHT + 2 * DOWN + 0.5 * i * UP,RIGHT + 2 * DOWN + 0.5 * i * UP  + 0.2 * LEFT * (5.2-i) ,color = BLACK, tip_length = 0.2)
+            bruh.add_tip()
+            forceVecsMid.append(bruh)
+        arrowsMid = VGroup(*forceVecsMid)
+        self.play(FadeIn(arrowsMid))
+        self.wait(1)
+
+        forceVecsRight = []
         
+        for i in range(1, 5):
+            bruh = Line(5 * RIGHT + 2 * DOWN + 0.5 * i * UP + 0.05 * i * LEFT,5 * RIGHT + 2 * DOWN + 0.5 * i * UP + 0.05 * i * LEFT + 0.2 * LEFT * (5.2-i) + 0.02 * DOWN * (5.2-i),color = BLACK, tip_length = 0.2)
+            bruh.add_tip()
+            forceVecsRight.append(bruh)
+        for i in range(1, 5):
+            bruh = Line(3 * RIGHT + 2 * DOWN + 0.5 * i * UP + 0.05 * i * RIGHT,3 *RIGHT + 2 * DOWN + 0.5 * i * UP + 0.05 * i * RIGHT + 0.2 * RIGHT * (5.2-i) + 0.02 * DOWN * (5.2-i),color = BLACK, tip_length = 0.2)
+            bruh.add_tip()
+            forceVecsRight.append(bruh)
+        arrowsRight = VGroup(*forceVecsRight)
+        self.play(FadeIn(arrowsRight))
+        self.wait(1)
+
+        self.play(Indicate(arrowsLeft))
+        self.wait(1)
+        self.play(Indicate(arrowsRight))
+        self.wait(1)
+        self.play(Indicate(arrowsMid))
+        self.wait(1)
+        self.play(FadeOut(container2),FadeOut(water2),FadeOut(container3),FadeOut(water3),FadeOut(waterLine),FadeOut(question),FadeOut(question2),FadeOut(f2),
+                    FadeOut(f3),FadeOut(hydroEq2),FadeOut(pressureEq),FadeOut(table),FadeOut(relation2),FadeOut(arrowsRight),FadeOut(arrowsMid))
+        
+        self.wait(1)
+
+
+
+        netForce = TexMobject("\\vec{F} = \\oint P \\, \\mathrm d \\vec{A}")
+        netForce.move_to(2 * UP)
+        vertForce = TexMobject("\\implies F_y = \\hat{y} \cdot \\vec{F} = \\oint (P \\hat{y}) \\cdot \\mathrm d \\vec{A}")
+        vertForce.move_to(0.6 * UP)
+        vertForce.align_to(netForce,LEFT)
+        vertForcePressure=  TexMobject("\\implies F_y = \\oint (P_{atm} - \\rho g y )\\hat{y} \\cdot \\mathrm d \\vec{A}")
+        vertForcePressure.move_to(0.6 * UP)
+        vertForcePressure.align_to(vertForce,LEFT)
+
+        divergTheorem = TexMobject("\\oint \\vec{E} \\cdot \\mathrm d A = \\int_V \\nabla \\cdot \\vec{E}\\,  \\mathrm d V")
+        divergTheorem.move_to(2.5 * RIGHT + 0.8 * DOWN)
+
+        divergTheoremApply = TexMobject("F_y = \\oint P\\hat{y} \\cdot \\mathrm d \\vec{A} = \\int_V - \\nabla \\cdot P\\hat{y} \\, \\mathrm d V")
+        divergTheoremApply.move_to(0.8 * DOWN)
+        divergTheoremApply.align_to(vertForcePressure,LEFT)
+        
+        divergTheoremCalc = TexMobject("\\implies F_y = \\int_V -(-\\rho g)\\, \\mathrm d V")
+        divergTheoremCalc.move_to(2.2 * DOWN)
+        divergTheoremCalc.align_to(divergTheoremApply,LEFT)
+        final = TexMobject("\\implies F_y = \\int_V \\rho g\\, \\mathrm d V = \\rho g V")
+        divergTheoremCalc.move_to(2.2 * DOWN)
+        divergTheoremCalc.align_to(divergTheoremApply,LEFT)
+
+        final.move_to(2.2 * DOWN)
+        final.align_to(divergTheoremCalc,LEFT)
+
+        self.play(Write(netForce),run_time = 1.5)
+        self.wait(1)
+        self.play(Write(vertForce),run_time = 1.5)
+        self.wait(1)
+        self.play(ReplacementTransform(vertForce,vertForcePressure),run_time = 1.5)
+        self.wait(1)
+        self.play(Write(divergTheorem))
+        self.wait(1)
+        self.play(ReplacementTransform(divergTheorem,divergTheoremApply),run_time = 1.5)
+        self.wait(1)
+        self.play(Write(divergTheoremCalc),run_time = 1.5)
+        self.wait(1)
+        self.play(ReplacementTransform(divergTheoremCalc,final),run_time = 1.5)
+        self.wait(1)
+
+
+        
+
+
 
 
     
@@ -162,12 +254,12 @@ class HydrostaticParadox(Scene):
 
 class Problem2(Scene):
     def construct(self):
-        for i in range(-16, 17):
-            for j in range(-8,9):
-                if(i == 0 and j == 0):
-                    self.add(Dot(color = RED))
-                    continue;
-                self.add(Dot(i / 2 * RIGHT + j / 2 * UP))
+        # for i in range(-16, 17):
+        #     for j in range(-8,9):
+        #         if(i == 0 and j == 0):
+        #             self.add(Dot(color = RED))
+        #             continue;
+        #         self.add(Dot(i / 2 * RIGHT + j / 2 * UP))
 
         title = TextMobject("Problem 2: ", "A famous see-saw")
         title.set_color_by_tex_to_color_map({
@@ -248,12 +340,12 @@ class Problem2(Scene):
         
         ### Solution from here ###
 
-        larr1 = Line(3.5 * LEFT + 0.7 * UP, 3.5 * LEFT + 0.25 * DOWN,color = BLACK)
-        larr2 = Line(3 * LEFT+ 0.7 * UP, 3 * LEFT + 0.25 * DOWN,color = BLACK)
-        larr3 = Line(2.5 * LEFT + 0.7 * UP, 2.5 * LEFT + 0.25 * DOWN,color = BLACK)
-        rarr1 = Line(3.5 * RIGHT + 0.7 * UP, 3.5 * RIGHT + 0.25 * DOWN,color = BLACK)
-        rarr2 = Line(3 * RIGHT+ 0.7 * UP, 3 * RIGHT + 0.25 * DOWN,color = BLACK)
-        rarr3 = Line(2.5 * RIGHT + 0.7 * UP, 2.5 * RIGHT + 0.25 * DOWN,color = BLACK)
+        larr1 = Line(3.5 * LEFT + 0.7 * UP, 3.5 * LEFT + 0.25 * DOWN,color = BLACK,tip_length = 0.2)
+        larr2 = Line(3 * LEFT+ 0.7 * UP, 3 * LEFT + 0.25 * DOWN,color = BLACK,tip_length = 0.2)
+        larr3 = Line(2.5 * LEFT + 0.7 * UP, 2.5 * LEFT + 0.25 * DOWN,color = BLACK,tip_length = 0.2)
+        rarr1 = Line(3.5 * RIGHT + 0.7 * UP, 3.5 * RIGHT + 0.25 * DOWN,color = BLACK,tip_length = 0.2)
+        rarr2 = Line(3 * RIGHT+ 0.7 * UP, 3 * RIGHT + 0.25 * DOWN,color = BLACK,tip_length = 0.2)
+        rarr3 = Line(2.5 * RIGHT + 0.7 * UP, 2.5 * RIGHT + 0.25 * DOWN,color = BLACK,tip_length = 0.2)
 
         larr1.add_tip()
         larr2.add_tip()
@@ -278,20 +370,96 @@ class Problem2(Scene):
         
     
         leftEq = TexMobject("F_L = F_P - F_T")
+        leftEq.move_to(3 * DOWN + 3 * LEFT)
         rightEq = TexMobject("F_R = F_P")
-        ineq = TexMobject("F_L < F_R")
+        rightEq.move_to(3 * DOWN + 3 * RIGHT)
+        ineq = TexMobject("<")
+        ineq.set_color(YELLOW)
+        ineq.move_to(3 * DOWN)
 
         self.play(FadeOut(larr1),FadeOut(larr2),FadeOut(larr3),FadeOut(rarr1),FadeOut(rarr2),FadeOut(rarr3))
 
-        tension = Line(3 * LEFT + 0.25 * DOWN, 3 * LEFT + 0.25 * UP,color = BLACK)
+        tension = Line(3 * LEFT + 0.25 * DOWN, 3 * LEFT + 0.4 * UP,color = DARK_BLUE,tip_length = 0.2)
         tension.add_tip()
+        self.wait(1)
         self.play(GrowFromPoint(tension,tension.get_bottom()))
+
+        self.wait(1)
         
+        self.play(Write(leftEq),run_time = 2)
+        self.play(Write(rightEq),run_time = 2)
+        self.play(Write(ineq))
+        self.wait(1)
+
 
         correct = Ellipse(width = 1.3, height = 0.7,color = GREEN)
         correct.move_to(2.25 * UP + 0.6 * LEFT)
 
         self.play(DrawBorderThenFill(correct))
+        self.wait(1)
+        self.play(FadeOut(tension),FadeOut(ineq),FadeOut(leftEq),FadeOut(rightEq))
+        self.wait(1)
+
+        outline1 = Polygon(1.5 * UP + 4 * LEFT,4 * LEFT + 0.25 * DOWN, 2 * LEFT+ 0.25 * DOWN, 2 * LEFT + 1.5 * UP,fill_opacity = 0,color = GREEN)
+        outline2 = Polygon(1.5 * UP + 4 * RIGHT,4 * RIGHT+ 0.25 * DOWN, 2 * RIGHT+ 0.25 * DOWN, 2 * RIGHT + 1.5 * UP,fill_opacity = 0,color = GREEN)
+
+        self.play(DrawBorderThenFill(outline1))
+        self.play(DrawBorderThenFill(outline2))
+        self.play(FadeOut(outline1),FadeOut(outline2))
+        self.wait(1)
+
+        gravPing = Line(pingPong.get_center(),pingPong.get_center() + DOWN, color = GREEN_C, tip_length = 0.2)
+        gravPing.add_tip()
+        gravRock = Line(rock.get_center(),rock.get_center() + 1.6 * DOWN, color = GREEN_C, tip_length = 0.2)
+        gravRock.add_tip()
+
+        tenRock = Line(rock.get_center(), rock.get_center() + 0.8 * UP, color = DARK_BLUE, tip_length = 0.2)
+        tenRock.add_tip()
+
+        self.play(GrowFromPoint(gravPing,gravPing.get_top()))
+        self.wait(1)
+        self.play(GrowFromPoint(gravRock,gravRock.get_top()))
+        self.wait(1)
+        self.play(GrowFromPoint(tenRock,tenRock.get_bottom()))
+        self.wait(1)
+
+        leftEq2 = TexMobject("F_L = W_P")
+        leftEq2.move_to(3 * DOWN + 3 * LEFT)
+        
+        leftEq3 = TexMobject("F_L = \\rho_P V g")
+        leftEq3.move_to(3 * DOWN + 3 * LEFT)
+
+        rightEq2 = TexMobject("F_R = W_R - F_T")
+        rightEq2.move_to(3 * DOWN + 3 * RIGHT)
+        rightEq3 = TexMobject("F_R = \\rho_RVg - F_T")
+        rightEq3.move_to(3 * DOWN + 3 * RIGHT)
+        rightEq4 = TexMobject("F_R = \\rho_RVg - (\\rho_R V g - \\rho_wVg)")
+        rightEq4.move_to(3 * DOWN + 3 * RIGHT)
+        rightEq5 = TexMobject("F_R = \\rho_wVg)")
+        rightEq5.move_to(3 * DOWN + 3 * RIGHT)
+        ineq2 = TexMobject("<")
+        ineq2.set_color(YELLOW)
+        ineq2.move_to(3 * DOWN)
+
+        self.play(Write(leftEq2),run_time = 2)
+        self.play(Write(rightEq2),run_time = 2)
+        self.wait(1)
+
+        self.play(ReplacementTransform(leftEq2,leftEq3),ReplacementTransform(rightEq2,rightEq3))
+        self.wait(1)
+        self.play(ReplacementTransform(rightEq3,rightEq4))
+        self.wait(1)
+        self.play(ReplacementTransform(rightEq4,rightEq5))
+        self.wait(1)
+        self.play(Write(ineq2))
+
+
+
+
+
+        
+
+
 
 
 
@@ -388,14 +556,7 @@ class Perpet(Scene):
         self.add(containerPart1, mask)
         self.add(pulleyTop,pulleyBot,string)
         self.wait(1)
-        for i in range(0, 12):
-            pingPongs[i].add_updater(ping_pong_updater)
-        for i in range(0,12):
-            self.add(pingPongs[i])
-        pulleyTop.add_updater(disc_rotate)
-        pulleyBot.add_updater(disc_rotate)
-        self.add(pulleyBot,pulleyTop)
-        self.wait(8)
+        
 
         enArrow = Arrow(ORIGIN, 2 * RIGHT)
         energyTxt = TexMobject("\\infty")
@@ -405,12 +566,33 @@ class Perpet(Scene):
         energy.move_to(5 * RIGHT)
         energy.scale(1.5)
 
-        self.play(GrowArrow(enArrow))
-        self.play(Write(energyTxt),DrawBorderThenFill(energy))
+        self.add(enArrow)
+        self.add(energyTxt,energy)
 
+   
+
+        
+        deny = Line(5.5 * RIGHT + 2 * DOWN, 2.5 * RIGHT+ 2 * UP, color = RED,stroke_width = 6)
+        self.add(deny)
+
+        question = TextMobject("What's the issue with this perpetual motion machine?")
+        question.move_to(3 * DOWN)
+        self.add(question)
+
+        for i in range(0, 12):
+            pingPongs[i].add_updater(ping_pong_updater)
+        for i in range(0,12):
+            self.add(pingPongs[i])
+        pulleyTop.add_updater(disc_rotate)
+        pulleyBot.add_updater(disc_rotate)
+        self.add(pulleyBot,pulleyTop)
+        self.wait(8)
+
+        self.wait(1)
+        
         for i in range(0,12):
             pingPongs[i].remove_updater(ping_pong_updater)
-
+        
         pulleyBot.remove_updater(disc_rotate)
         pulleyTop.remove_updater(disc_rotate)
 
@@ -418,13 +600,85 @@ class Perpet(Scene):
             self.remove(pingPongs[i])
         
         self.wait(1)
-        
-        deny = Line(5.5 * RIGHT + 2 * DOWN, 2.5 * RIGHT+ 2 * UP, color = RED,stroke_width = 6)
-        self.play(GrowFromPoint(deny,5.5 * RIGHT + 2 * DOWN))
 
-        question = TextMobject("What's the issue with this perpetual motion machine?")
-        question.move_to(3 * DOWN)
-        self.play(Write(question),run_time =  2)
+        newPingPong = Circle(radius = 0.25, fill_opacity = 1, fill_color = WHITE, color = WHITE)
+        newPingPong.move_to(1.05 * LEFT)
+        newPingPong.speed = 0.2
+        newPingPong.acc = 0.6
+
+        ### Solutions from here ###
+
+        newPingPong.add_updater(ping_pong_updater)
+        self.add(newPingPong)
+        self.wait(3.4)
+        newPingPong.remove_updater(ping_pong_updater)
+        self.wait(1)
+        self.play(FadeOut(enArrow),FadeOut(energyTxt),FadeOut(energy),FadeOut(deny))
+        self.wait(1)
+
+        changeEnergy = TexMobject("\\Delta E")
+        changeEnergy2 = TexMobject("= W_g + W_b + W_{in}")
+        changeEnergy.move_to(0.5 * RIGHT + 2 * UP)
+        changeEnergy2.next_to(changeEnergy,direction = RIGHT, buff = 0.62, aligned_edge=  LEFT)
+        changeEnergy2.align_to(changeEnergy,direction = UP)
+        self.play(Write(changeEnergy))
+        self.wait(1)
+        self.play(Write(changeEnergy2))
+
+        bruh = TexMobject("= 0 + \\rho V g h + W_{in}")
+        bruh.move_to(UP)
+        bruh.align_to(changeEnergy2,LEFT)
+        bruh2 = TexMobject("W_{in} = (-PA)d = -PV")
+        bruh2.move_to(0 * UP + 1.5 * 1.3 * RIGHT)
+        bruh3 = TexMobject("= 0 + \\rho V g h - P V")
+        bruh3.move_to(0 * DOWN)
+        bruh3.align_to(changeEnergy2,LEFT)
+        bruh4 = TexMobject("=0 + \\rho Vg h - \\rho gh V = 0")
+        bruh4.move_to(0 * DOWN)
+        bruh4.align_to(changeEnergy2,LEFT)
+
+        def move_ball(x,y,z,t):
+            return[x,y + 0.6 * t,z]
+
+        self.wait(1)
+        self.play(Write(bruh))
+        self.wait(1)
+        self.play(Write(bruh2),Homotopy(move_ball,newPingPong),run_time = 2)
+        self.wait(1)
+        self.play(FadeOut(bruh2))
+        self.wait(1)
+        self.play(Write(bruh3))
+        self.wait(1)
+        self.play(ReplacementTransform(bruh3,bruh4))
+
+
+class Img(Scene):
+    def construct(self):
+        self.add(Line(ORIGIN, RIGHT + 3 * UP))
+        bruh = Line(0.5 * RIGHT + 1.5 * UP, 4 * LEFT + 3 * UP)
+        bruh.add_tip()
+        self.add(bruh)
+        bruh2 = DashedLine(4 * LEFT + 1.5 * UP, 4* LEFT + 3 * UP,color = YELLOW)
+        bruh2.add_tip()
+        bruh3 = DashedLine(4 * LEFT + 1.5 * UP,1.5 * UP + 0.5 *RIGHT,color = GREEN)
+        self.add(bruh2,bruh3)
+        self.add(DashedLine(ORIGIN, RIGHT,color = YELLOW),DashedLine(RIGHT, RIGHT + 3 * UP, color = GREEN))
+
+        
+        theta1 = TexMobject("\\theta")
+        theta1.scale(0.6)
+        theta1.move_to(1.5 * LEFT + 1.8 * UP)
+        theta2 = TexMobject("\\theta")
+        theta2.scale(0.6)
+        theta2.move_to(0.8 * RIGHT + 1.6 * UP)
+        
+
+        self.add(theta1,theta2)
+        self.wait(1)
+
+class Img2(Scene):
+    def construct(self):
+        self.add(TexMobject("PA\\sin \\theta  = P(A\\sin \\theta) = PA_{h}"))
         self.wait(1)
 
 
